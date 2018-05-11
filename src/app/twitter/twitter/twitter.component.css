@@ -1,0 +1,61 @@
+.twitter-component {
+  max-width: 698px;
+  border: 1px solid #aab8c2;
+  border-radius: 10px;
+  margin: auto;
+}
+.twitter-component .header {
+  display: block;
+  padding: 15px;
+  height: 80px;
+}
+.twitter-component .header .profile-info {
+  display: inline-block;
+}
+.twitter-component .header .profile-info .profile-picture {
+  display: inline-block;
+  padding: 2px 0;
+  vertical-align: top;
+}
+.twitter-component .header .profile-info .profile-picture img {
+  height: 46px;
+  width: 46px;
+  border-radius: 23px;
+}
+.twitter-component .header .profile-info .names {
+  display: inline-block;
+  padding: 3px 5px;
+}
+.twitter-component .header .profile-info .names .name {
+  display: block;
+}
+.twitter-component .header .profile-info .names .handle {
+  display: block;
+}
+.twitter-component .header .logo {
+  display: inline-block;
+  padding: 2px;
+  float: right;
+}
+.twitter-component .header .logo img {
+  height: 46px;
+  width: 46px;
+}
+.twitter-component .tweet {
+  display: block;
+  padding: 15px;
+}
+.twitter-component .footer {
+  display: block;
+  padding: 15px;
+}
+.twitter-component .footer .actions {
+  display: inline-block;
+}
+.twitter-component .footer .actions img {
+  height: 20px;
+}
+.twitter-component .footer .date {
+  display: inline-block;
+  float: right;
+}

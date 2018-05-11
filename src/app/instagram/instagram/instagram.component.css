@@ -1,0 +1,73 @@
+.item-instagram {
+  max-width: 658px;
+  border: 1px solid #eeeeee;
+  border-radius: 2px;
+  margin: auto;
+}
+.item-instagram a {
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+.item-instagram a .header {
+  width: 100%;
+  height: 54px;
+  display: block;
+  padding: 10px;
+}
+.item-instagram a .header .profile-info {
+  display: inline-block;
+  height: 100%;
+}
+.item-instagram a .header .profile-info .profile-picture {
+  display: inline-block;
+  padding: 2px;
+}
+.item-instagram a .header .profile-info .profile-picture img {
+  height: 30px;
+  width: 30px;
+}
+.item-instagram a .header .profile-info .profile-username {
+  display: inline-block;
+  color: #262626;
+  font-weight: 600;
+}
+.item-instagram a .header .profile-info .profile-verified {
+  display: inline-block;
+  height: 14px;
+  width: 14px;
+}
+.item-instagram a .header .profile-info .profile-verified img {
+  height: 100%;
+  width: 100%;
+}
+.item-instagram a .header .follow-button-cont {
+  float: right;
+  display: inline-block;
+}
+.item-instagram a .header .follow-button-cont .follow-button {
+  background-color: #3897f0;
+  border-radius: 3px;
+  color: white;
+  font-weight: 600;
+  padding: 5px 12px;
+  text-decoration: none;
+}
+.item-instagram a .image {
+  display: block;
+}
+.item-instagram a .image img {
+  width: 100%;
+}
+.item-instagram a .likes {
+  color: #262626;
+  font-weight: 600;
+  padding: 10px;
+}
+.item-instagram a .caption {
+  padding: 0 10px;
+}
+.item-instagram a .comments {
+  padding: 10px;
+  color: #999999;
+}
