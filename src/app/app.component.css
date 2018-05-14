@@ -1,29 +1,36 @@
 .container {
-  padding: 0;
+	padding: 0;
 }
+
 .container .navbar {
-  background: black;
+	background: black;
 }
+
 .container .navbar.jumla .navbar-header .navbar-brand {
-  color: white;
-  font-family: 'Comfortaa', cursive;
-  font-size: 24px;
+	color: white;
+	font-family: 'Comfortaa', cursive;
+	font-size: 24px;
 }
+
 .container .navbar.jumla .navbar-header .navbar-toggle {
-  border-color: white;
+	border-color: white;
 }
+
 .container .navbar.jumla .navbar-header .navbar-toggle .icon-bar {
-  background: white;
+	background: white;
 }
+
 .container .navbar.jumla .collapse .navbar-nav li a {
-  color: white;
-  font-family: 'Comfortaa', cursive;
-  font-size: 18px;
-  line-height: 22px;
+	color: white;
+	font-family: 'Comfortaa', cursive;
+	font-size: 18px;
+	line-height: 22px;
 }
+
 .container .navbar.jumla .collapse .navbar-nav li a:hover {
-  filter: brightness(80%);
+	filter: brightness(80%);
 }
+
 .container .navbar.jumla .collapse .navbar-nav li a.active {
-  color: #ffd633;
+	color: #ffd633;
 }

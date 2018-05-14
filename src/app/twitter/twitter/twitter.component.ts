@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-twitter',
-  templateUrl: './twitter.component.html',
-  styleUrls: ['./twitter.component.css']
+	selector: 'jumla-twitter',
+	templateUrl: './twitter.component.html',
+	styleUrls: ['./twitter.component.css']
 })
-export class TwitterComponent implements OnInit {
+export class TwitterComponent {
 
-  constructor() { }
-
-  ngOnInit() {
-  }
+	
 
 }
