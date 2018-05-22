@@ -1,3 +1,5 @@
 <div class="container">
-	<jumla-twitter-item></jumla-twitter-item>
+	<div *ngFor="let tweet of tweets">
+		<jumla-twitter-item [tweet]="tweet"></jumla-twitter-item>
+	</div>
 </div>

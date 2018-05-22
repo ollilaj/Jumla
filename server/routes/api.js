@@ -14,12 +14,14 @@ router.get('/', function (req, res) {
 	res.send('api works');
 });
 
-router.get('/twitter/test', function (req, res) {
+router.get('/twitter/:user', function (req, res) {
 
-	var params = {screen_name: 'jakeollila'};
-	client.get('statuses/user_timeline', params, function(error, tweets, response) {
+	var user = req.params.user;
+	var params = {screen_name: user, count: '5'};
+
+	client.get('statuses/user_timeline', params, function(error, tweets) {
 		if (!error) {
-			console.log(tweets);
+			res.send(tweets);
 		}
 		else{
 			console.log(error);

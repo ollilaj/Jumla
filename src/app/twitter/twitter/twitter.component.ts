@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { TwitterService } from './twitter.service'
+import { TwitterService } from './twitter.service';
+import { TwitterItemComponent } from '../twitter-item/twitter-item.component'
 
 @Component({
 	selector: 'jumla-twitter',
@@ -9,15 +10,27 @@ import { TwitterService } from './twitter.service'
 })
 export class TwitterComponent implements OnInit{
 
-	user;
+	public tweets: any[];
 
 	constructor(private twitter : TwitterService){}
 
 	ngOnInit(){
-		this.twitter.test().subscribe(
-			function(response){ console.log("Successful Response: " + response)},
-			function(error){ console.log("Error: " + error)}
+
+		this.fetchTweets();
+
+	}
+
+	fetchTweets(): void {
+
+		this.twitter.getTweets('rihanna').subscribe(
+			(response: any[]) => {
+
+				this.tweets = response
+
+			}
 		)
+
 	}
 
 }
+

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'jumla-twitter-item',
@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
 })
 export class TwitterItemComponent {
 
+	@Input() tweet: any;
 
 }
