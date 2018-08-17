@@ -15,23 +15,37 @@ const client = new Twitter({
 	access_token_secret: 'UxFcj1O4h3VgoFjXUyVWAqE6kROcFsZPpVPQQMH9Fnm5B'
 });
 
-// Used to create documents for celebs and users
-router.get('/register', function(req, res){
+router.get('/', function(req, res){
 
-	var user = new User();
-	user.username = req.body.username;
-	User.setPassword(user, req.body.password);
-	user.follows = [];
-	user.save(function (err) {
+	var celeb = new Celebrity();
+	celeb.name = "";
+	celeb.twitterId = "";
+	celeb.save(function(err, celeb){
 		if (err) throw err;
-		else {
+		else{
 			res.json({success: true});
 		}
 	});
 
 });
 
-router.get('/authenticate', function(req,res){
+router.post('/register', function(req, res){
+	var user = new User();
+	user.username = req.body.username;
+	User.setPassword(user, req.body.password);
+	user.follows = [];
+	user.save(function (err, user) {
+		if (err) throw err;
+		else {
+			res.json({
+				success: true,
+				id: user._id
+			});
+		}
+	});
+});
+
+router.post('/authenticate', function(req,res){
 	var username = req.body.username;
 	var password = req.body.password;
 
@@ -46,8 +60,7 @@ router.get('/authenticate', function(req,res){
 				success: true,
 				user: {
 					id: user._id,
-					username: user.username,
-					follows: user.follows
+					username: user.username
 				}
 			});
 		} else {

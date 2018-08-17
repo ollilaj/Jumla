@@ -2,18 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-export interface TwitterResponse {
-	data: any;
-	resp: any;
-}
-
 @Injectable()
-export class TwitterService {
+export class LoginService {
 
 	constructor(private http : HttpClient){}
 
-	getTweets(user) : Observable<any>{
-		return this.http.get<TwitterResponse>('/api/getTweets/' + user);
+	register(data) : Observable<any>{
+		return this.http.post('/api/register', data);
+	}
+
+	authenticate(data) : Observable<any>{
+		return this.http.post('/api/authenticate', data);
 	}
 
 }
