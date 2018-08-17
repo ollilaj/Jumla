@@ -5,12 +5,14 @@ import { AllModule } from './all/all.module';
 import { InstagramModule } from './instagram/instagram.module';
 import { TwitterModule } from './twitter/twitter.module';
 import { NewsModule } from './news/news.module';
+import { LoginModule } from './login/login.module';
+import { NavBarModule } from './nav-bar/nav-bar.module';
 
 import { routing } from './app.routes';
 
 @NgModule({
 	declarations: [
-		AppComponent,
+		AppComponent
 	],
 	imports: [
 		BrowserModule,
@@ -18,7 +20,9 @@ import { routing } from './app.routes';
 		AllModule,
 		InstagramModule,
 		TwitterModule,
-		NewsModule
+		NewsModule,
+		LoginModule,
+		NavBarModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]

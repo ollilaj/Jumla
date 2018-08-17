@@ -2,15 +2,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { TwitterComponent } from './twitter/twitter.component';
-import { TwitterItemComponent } from './twitter-item/twitter-item.component';
+import { NavBarModule } from '../nav-bar/nav-bar.module';
 
 @NgModule({
 	imports: [
 		CommonModule,
-		HttpClientModule
+		HttpClientModule,
+		NavBarModule
 	],
-	declarations: [TwitterComponent, TwitterItemComponent],
-	exports: [TwitterItemComponent]
+	declarations: [TwitterComponent],
+	exports: [TwitterComponent]
 })
 export class TwitterModule {
 }

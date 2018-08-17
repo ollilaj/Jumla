@@ -24,10 +24,14 @@
     "body-parser": "^1.18.3",
     "bootstrap": "^3.3.7",
     "core-js": "^2.4.1",
+    "crypto": "^1.0.1",
     "express": "^4.16.3",
     "jquery": "^3.3.1",
+    "mongoose": "^5.2.9",
+    "ngtweet": "^1.0.0",
     "rxjs": "^5.5.6",
     "twitter": "^1.7.1",
+    "yui": "^3.18.1",
     "zone.js": "^0.8.19"
   },
   "devDependencies": {
