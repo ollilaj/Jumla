@@ -5,6 +5,7 @@ import { TwitterComponent } from './twitter/twitter/twitter.component';
 import { NewsComponent } from './news/news/news.component';
 import { SignInComponent } from './login/sign-in/sign-in.component';
 import { SignUpComponent } from './login/sign-up/sign-up.component';
+import { FollowComponent } from './follow/follow/follow.component';
 
 const routes:Routes = [
 	{path: '', redirectTo: 'sign-in', pathMatch: 'full'},
@@ -13,7 +14,8 @@ const routes:Routes = [
 	{path: 'all', component: AllComponent},
 	{path: 'instagram', component: InstagramComponent},
 	{path: 'twitter', component: TwitterComponent},
-	{path: 'news', component: NewsComponent}
+	{path: 'news', component: NewsComponent},
+	{path: 'follow', component: FollowComponent}
 ];
 
 export const routing = RouterModule.forRoot(routes);

@@ -32,7 +32,7 @@ export class SignUpComponent implements OnInit {
 			this.loginService.register(data).subscribe(
 				(response : any) => {
 					if(response.success){
-						localStorage.setItem("user", response.user);
+						localStorage.setItem("user", JSON.stringify(response.user));
 						this.router.navigate(['all']);
 					} else {
 						alert("Could Not Sign Up");

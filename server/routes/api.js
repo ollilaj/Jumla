@@ -15,17 +15,120 @@ const client = new Twitter({
 	access_token_secret: 'UxFcj1O4h3VgoFjXUyVWAqE6kROcFsZPpVPQQMH9Fnm5B'
 });
 
-router.get('/', function(req, res){
+// Used to create the celebrity data
+router.get('/createCelebrityData', function(req, res){
 
-	var celeb = new Celebrity();
-	celeb.name = "";
-	celeb.twitterId = "";
-	celeb.save(function(err, celeb){
-		if (err) throw err;
-		else{
-			res.json({success: true});
-		}
-	});
+	var celebrities = ["Adele",
+		"Ariana Grande",
+		"Ashley Benson",
+		"Bella Hadid",
+		"Beyonce",
+		"Bruno Mars",
+		"Cara Delevingne",
+		"Chance the Rapper",
+		"Christina Aguilera",
+		"Ciara",
+		"Dan Bilzerian",
+		"Demi Lovato",
+		"Drake",
+		"Ed Sheeran",
+		"Ellie Goulding",
+		"Elon Musk",
+		"Eminem",
+		"Emma Watson",
+		"Floyd Mayweather",
+		"Gigi Hadid",
+		"Harry Styles",
+		"Jennifer Lopez",
+		"Jimmy Fallon",
+		"Justin Bieber",
+		"Justin Timberlake",
+		"Katy Perry",
+		"Kendall Jenner",
+		"Kevin Hart",
+		"Kim Kardashian",
+		"Kylie Jenner",
+		"Lady Gaga",
+		"Leonardo DiCaprio",
+		"Lil Wayne",
+		"Lucy Hale",
+		"Mariah Carey",
+		"Miley Ray Cyrus",
+		"Niall Horan",
+		"Nicki Minaj",
+		"P!nk",
+		"Rihanna",
+		"Scott Disick",
+		"Selena Gomez",
+		"Shakira",
+		"Snoop Dogg",
+		"Taylor Swift",
+		"Vanessa Hudgens",
+		"Zac Efron",
+		"Zayn",
+		"Zendaya"
+	];
+	var twitterNames = ["adele",
+		"arianagrande",
+		"ashbenzo",
+		"bellahadid",
+		"beyonce",
+		"brunomars",
+		"caradelevingne",
+		"chancetherapper",
+		"xtina",
+		"ciara",
+		"danbilzerian",
+		"ddlovato",
+		"drake",
+		"edsheeran",
+		"elliegoulding",
+		"elonmusk",
+		"eminem",
+		"emwatson",
+		"floydmayweather",
+		"gigihadid",
+		"harry_styles",
+		"jlo",
+		"jimmyfallon",
+		"justinbieber",
+		"jtimberlake",
+		"katyperry",
+		"kendalljenner",
+		"kevinhart4real",
+		"kimkardashian",
+		"kyliejenner",
+		"ladygaga",
+		"leodicaprio",
+		"liltunechi",
+		"lucyhale",
+		"mariahcarey",
+		"mileycyrus",
+		"niallofficial",
+		"nickiminaj",
+		"pink",
+		"rihanna",
+		"scottdisick",
+		"selenagomez",
+		"shakira",
+		"snoopdogg",
+		"taylorswift13",
+		"vanessahudgens",
+		"zacefron",
+		"zaynmalik",
+		"zendaya"
+	];
+
+	var celeb;
+
+	/*for(var i = 0; i < celebrities.length; i++) {
+		celeb = new Celebrity();
+		celeb.name = celebrities[i];
+		celeb.twitterId = twitterNames[i];
+		celeb.save(function(err){
+			if (err) throw err;
+		});
+	}*/
 
 });
 
@@ -104,10 +207,11 @@ router.get('/getRSSFeeds', function(req, res){
 });
 
 router.get('/getCelebsTheyFollow/:userId', function(req, res){
+	var userId = req.params.userId;
 	User.getCelebrities(userId, function(err, celebs){
 		if (err) throw err;
 		else {
-			res.json({celebs: celebs});
+			res.json({celebs: celebs.follows});
 		}
 	});
 });

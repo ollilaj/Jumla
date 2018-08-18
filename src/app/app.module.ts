@@ -7,6 +7,7 @@ import { TwitterModule } from './twitter/twitter.module';
 import { NewsModule } from './news/news.module';
 import { LoginModule } from './login/login.module';
 import { NavBarModule } from './nav-bar/nav-bar.module';
+import { FollowModule } from './follow/follow.module';
 
 import { routing } from './app.routes';
 
@@ -22,7 +23,8 @@ import { routing } from './app.routes';
 		TwitterModule,
 		NewsModule,
 		LoginModule,
-		NavBarModule
+		NavBarModule,
+		FollowModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]

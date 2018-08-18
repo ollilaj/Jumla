@@ -26,7 +26,7 @@ export class SignInComponent implements OnInit {
 		this.loginService.authenticate(data).subscribe(
 			(response : any) => {
 				if(response.success) {
-					localStorage.setItem("user", response.user);
+					localStorage.setItem("user", JSON.stringify(response.user));
 					this.router.navigate(['all']);
 				} else {
 					alert("Error: " + response.msg);
