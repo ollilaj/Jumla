@@ -40,22 +40,40 @@ export class TwitterComponent implements OnInit{
 	}
 
 	fetchTweets(): void {
-
-		this.twitterService.getTweets('rihanna').subscribe(
-			(response : any[]) => {
-
-				this.tweets = response;
-				this.visualizeTweets();
-
+		var userId = JSON.parse(localStorage.getItem("user")).id;
+		this.twitterService.getCelebsTheyFollow(userId).subscribe(
+			(celebData : any) => {
+				this.twitterService.getTweets(celebData.celebs).subscribe(
+					(twitterData : any) => {
+						this.tweets = this.concatArrays(twitterData);
+						this.sortTweets();
+						this.visualizeTweets();
+					}
+				);
 			}
 		)
+	}
 
+	concatArrays(arrays) : any[] {
+		var singleArray = [];
+		for(let array of arrays) {
+			singleArray = singleArray.concat(array);
+		}
+		return singleArray;
+	}
+
+	sortTweets() : void {
+		this.tweets = this.tweets.sort(function(a,b){
+			var c = a.created_at;
+			var d = b.created_at;
+
+			return (new Date(c).getTime()) - (new Date(d).getTime());
+		});
+		this.tweets = this.tweets.reverse();
 	}
 
 	visualizeTweets(): void {
-
 		for(let tweet of this.tweets) {
-
 			var newTweet = document.createElement("div");
 			newTweet.classList.add("item-twitter");
 			newTweet.style.width = '500px';
@@ -72,9 +90,7 @@ export class TwitterComponent implements OnInit{
 					cards        : 'visible'  // or visible
 				}
 			);
-
 		}
-
 	}
 
 }

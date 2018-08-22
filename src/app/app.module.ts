@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
+import { RouterModule, Routes } from '@angular/router';
 import { AllModule } from './all/all.module';
 import { InstagramModule } from './instagram/instagram.module';
 import { TwitterModule } from './twitter/twitter.module';
@@ -17,7 +18,7 @@ import { routing } from './app.routes';
 	],
 	imports: [
 		BrowserModule,
-		routing,
+		RouterModule.forRoot(routing),
 		AllModule,
 		InstagramModule,
 		TwitterModule,

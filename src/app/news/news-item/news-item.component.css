@@ -3,7 +3,7 @@
   border: 1px solid #d9d9d9;
   border-radius: 5px;
   margin: auto;
-  margin-bottom: 50px;
+  font-family: 'Montserrat', sans-serif !important;
 }
 .news-item .title {
   display: block;
@@ -18,6 +18,9 @@
 .news-item .description {
   display: block;
   padding: 10px 15px;
+}
+.news-item .description img {
+  margin-right: 15px;
 }
 .news-item .footer {
   display: block;

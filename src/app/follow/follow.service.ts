@@ -15,4 +15,12 @@ export class FollowService {
 		return this.http.get('/api/getCelebsTheyFollow/' + userId);
 	}
 
+	followCelebrity(data) : Observable<any>{
+		return this.http.post('/api/follow', data)
+	}
+
+	unfollowCelebrity(data) : Observable<any>{
+		return this.http.post('/api/unfollow', data)
+	}
+
 }

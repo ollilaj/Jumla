@@ -1,6 +1,7 @@
 #screen {
   width: 100%;
   height: 100%;
+  font-family: 'Montserrat', sans-serif !important;
 }
 #screen #sign-up-cont {
   position: relative;

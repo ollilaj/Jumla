@@ -6,7 +6,7 @@ var userSchema = mongoose.Schema({
 	hash: String,
 	salt: String,
 	follows: [
-		{type: mongoose.Schema.Types.ObjectId, ref: 'celebrity' }
+		{type: mongoose.Schema.Types.ObjectId, ref: 'Celebrity' }
 	]
 });
 
@@ -46,7 +46,27 @@ module.exports.updatePassword = function (user, callback) {
 };
 
 module.exports.getCelebrities = function (userId, callback) {
-	User.find({
-		id: userId
-	}).populate('follows').exec(callback);
+	User.findById(userId).populate('follows').exec(callback);
+};
+
+module.exports.follow = function (data, callback) {
+	User.findByIdAndUpdate(data.userId,
+		{$push: {follows: data.celebrityId}},
+		{safe: true},
+		function (err) {
+			if (err) console.log(err);
+			callback();
+		}
+	);
+};
+
+module.exports.unfollow = function (data, callback) {
+	User.findByIdAndUpdate(data.userId,
+		{$pull: {follows: data.celebrityId}},
+		{safe: true},
+		function (err) {
+			if (err) console.log(err);
+			callback();
+		}
+	);
 };

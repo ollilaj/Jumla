@@ -7,9 +7,12 @@
 					<div id="celebrities-header-text">Celebrities</div>
 					<div *ngFor="let celebrity of celebrities" attr.data-celebid="{{celebrity._id}}" class="celebrity-item">
 						<div class="celebrity-name">{{celebrity.name}}</div>
-						<div class="follow-button">
-							Follow
-							<img src="" />
+
+						<div *ngIf="celebrity.isFollowed" class="follow-button-cont">
+							<div class="follow-button isFollowed" (click)="unfollow($event)">Unfollow</div>
+						</div>
+						<div *ngIf="!celebrity.isFollowed" class="follow-button-cont">
+							<div class="follow-button" (click)="follow($event)">Follow</div>
 						</div>
 					</div>
 				</div>

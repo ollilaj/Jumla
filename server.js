@@ -7,11 +7,13 @@ const api = require('./server/routes/api.js');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-// Point static path to dist
-app.use(express.static(path.join(__dirname, 'dist')));
-
 // Set our api routes
 app.use('/api', api);
+
+// Send all other requests to the Angular app
+app.get('*', function(req, res) {
+	res.sendFile(path.join(__dirname, 'dist/index.html'));
+});
 
 // Start express server
 app.listen(3000, function(){

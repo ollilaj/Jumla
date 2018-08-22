@@ -1,10 +1,10 @@
 <div class="news-item">
-	<div class="title">Trump is a loser!</div>
-	<div class="date">March 13th, 2018</div>
-	<div class="description">Lorem ipsum dolor sit amet, platonem signiferumque vis eu, amet solum te pri, ei erant corpora qui. Dicant causae usu no, eos mentitum dignissim te, velit expetenda sententiae nec ex. Est an omnes ubique. Ex vocent impetus vix, dicit elitr albucius eos ex. Ad vis eruditi inimicus recteque, usu mazim latine interesset eu. Sed cu reque numquam constituam, eius rebum dicant vim ad.</div>
+	<div class="title">{{article.title}}</div>
+	<div class="date">{{article.pubDate}}</div>
+	<div class="description" [innerHtml]="article.description"></div>
 	<div class="footer">
-		<div class="news-source">via TMZ</div>
-		<a href="https://www.cnn.com">
+		<div class="news-source">via {{article.source}}</div>
+		<a href="{{article.link}}" target="_blank">
 			<div class="read-more-button">Read More</div>
 		</a>
 	</div>

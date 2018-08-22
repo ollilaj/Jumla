@@ -1,4 +1,6 @@
 <app-nav-bar></app-nav-bar>
 <div class="container">
-	<jumla-news-item></jumla-news-item>
+	<div *ngFor="let article of articles" style="padding: 25px 0">
+		<jumla-news-item [article]="article"></jumla-news-item>
+	</div>
 </div>

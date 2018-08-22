@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FollowService } from '../follow.service';
+import * as $ from 'jquery';
 
 @Component({
 	selector: 'app-follow',
@@ -31,7 +32,6 @@ export class FollowComponent implements OnInit {
 				} else {
 					this.celebrities = allCelebs;
 				}
-				console.log(this.celebrities);
 			}
 		)
 	}
@@ -46,13 +46,39 @@ export class FollowComponent implements OnInit {
 
 				if(currentCelebId == currentFollowedCelebId){
 					allCelebs[i].isFollowed = true;
-				} else {
-					allCelebs[i].isFollowed = false;
 				}
 			}
 		}
 
 		this.celebrities = allCelebs;
+	}
+
+	follow(event) : void {
+		var celebrityId = $(event.target).closest(".celebrity-item").attr("data-celebid");
+		var currentUserId = JSON.parse(localStorage.getItem("user")).id;
+		var data = {
+			celebrityId: celebrityId,
+			userId: currentUserId
+		};
+		this.followService.followCelebrity(data).subscribe(
+			(data : any) => {
+				this.celebrities.find(celeb => celeb._id === celebrityId).isFollowed = true;
+			}
+		)
+	}
+
+	unfollow(event) : void {
+		var celebrityId = $(event.target).closest(".celebrity-item").attr("data-celebid");
+		var currentUserId = JSON.parse(localStorage.getItem("user")).id;
+		var data = {
+			celebrityId: celebrityId,
+			userId: currentUserId
+		};
+		this.followService.unfollowCelebrity(data).subscribe(
+			(data : any) => {
+				this.celebrities.find(celeb => celeb._id === celebrityId).isFollowed = false;
+			}
+		)
 	}
 
 }

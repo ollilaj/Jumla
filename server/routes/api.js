@@ -15,6 +15,8 @@ const client = new Twitter({
 	access_token_secret: 'UxFcj1O4h3VgoFjXUyVWAqE6kROcFsZPpVPQQMH9Fnm5B'
 });
 
+var TwitterCache = {};
+
 // Used to create the celebrity data
 router.get('/createCelebrityData', function(req, res){
 
@@ -85,7 +87,7 @@ router.get('/createCelebrityData', function(req, res){
 		"elliegoulding",
 		"elonmusk",
 		"eminem",
-		"emwatson",
+		"emmawatson",
 		"floydmayweather",
 		"gigihadid",
 		"harry_styles",
@@ -177,14 +179,26 @@ router.get('/getTweets/:user', function (req, res) {
 	var user = req.params.user;
 	var params = {screen_name: user, count: '5'};
 
-	client.get('statuses/user_timeline', params, function(error, tweets) {
-		if (!error) {
-			res.send(tweets);
-		}
-		else{
-			console.log(error);
-		}
-	});
+	var currentTime = new Date().getTime();
+
+	// Checks if the cached data is less than 15 minutes old
+	if(TwitterCache[user] && ((currentTime - TwitterCache[user].storedAt) < 1000000)) {
+		res.send(TwitterCache[user].data);
+	}
+	else {
+		client.get('statuses/user_timeline', params, function(error, tweets) {
+			if (!error) {
+				TwitterCache[user] = {
+					storedAt: new Date().getTime(),
+					data: tweets
+				};
+				res.send(tweets);
+			}
+			else {
+				console.log(error);
+			}
+		});
+	}
 });
 
 // Get items from the specified rss feeds
@@ -211,7 +225,10 @@ router.get('/getCelebsTheyFollow/:userId', function(req, res){
 	User.getCelebrities(userId, function(err, celebs){
 		if (err) throw err;
 		else {
-			res.json({celebs: celebs.follows});
+			res.json({
+				success: true,
+				celebs: celebs.follows
+			});
 		}
 	});
 });
@@ -225,7 +242,31 @@ router.get('/getAllCelebrities', function(req, res){
 	});
 });
 
-// Catch all other routes and return no page found
+router.post('/follow', function(req, res){
+	var celebrityId = req.body.celebrityId;
+	var userId = req.body.userId;
+	var data = {
+		celebrityId: celebrityId,
+		userId: userId
+	};
+	User.follow(data, function(){
+		res.json({success: true});
+	});
+});
+
+router.post('/unfollow', function(req, res){
+	var celebrityId = req.body.celebrityId;
+	var userId = req.body.userId;
+	var data = {
+		celebrityId: celebrityId,
+		userId: userId
+	};
+	User.unfollow(data, function(){
+		res.json({success: true});
+	});
+});
+
+// Catch all other api routes and return no page found
 router.get('*', function(req, res) {
 	res.send("No page found");
 });
