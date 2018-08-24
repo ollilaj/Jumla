@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { AllComponent } from './all/all/all.component';
 import { InstagramComponent } from './instagram/instagram/instagram.component';
 import { TwitterComponent } from './twitter/twitter/twitter.component';

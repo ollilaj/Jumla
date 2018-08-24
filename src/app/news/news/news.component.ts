@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { NewsService } from './news.service';
 import { Observable } from 'rxjs/Observable';
+import { Router } from '@angular/router';
+import { NavBarService } from '../../nav-bar/nav-bar.service';
 
 @Component({
 	selector: 'jumla-news',
@@ -8,14 +10,30 @@ import { Observable } from 'rxjs/Observable';
 	styleUrls: ['./news.component.css'],
 	providers: [NewsService]
 })
-export class NewsComponent implements OnInit {
+export class NewsComponent implements OnInit, AfterViewInit {
 
 	public articles = [];
 
-	constructor(private newsService : NewsService) {}
+	constructor(private newsService : NewsService,
+				private navBarService : NavBarService,
+				private router: Router) {}
 
 	ngOnInit() {
+		this.authenticate();
 		this.fetchNews();
+	}
+
+	ngAfterViewInit(){
+		setTimeout(_ => {
+			this.navBarService.show();
+		});
+	}
+
+	authenticate() : void {
+		var user = localStorage.getItem("user");
+		if(!user){
+			this.router.navigate(['sign-in']);
+		}
 	}
 
 	/*

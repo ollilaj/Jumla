@@ -15,4 +15,8 @@ export class LoginService {
 		return this.http.post('/api/authenticate', data);
 	}
 
+	checkUsername(username): Observable<any> {
+		return this.http.get('/api/checkForUserName/' + username);
+	}
+
 }

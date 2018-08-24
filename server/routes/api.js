@@ -142,9 +142,13 @@ router.post('/register', function(req, res){
 	user.save(function (err, user) {
 		if (err) throw err;
 		else {
+			User.followFirstCeleb(user._id);
 			res.json({
 				success: true,
-				id: user._id
+				user: {
+					id: user._id,
+					username: user.username
+				}
 			});
 		}
 	});
@@ -174,6 +178,20 @@ router.post('/authenticate', function(req,res){
 	});
 });
 
+// Check for duplicate user
+router.get('/checkForUserName/:username', function (req,res) {
+	var username = req.params.username;
+	User.getUserByUsername(username, function (err,user) {
+		if(err) throw err;
+		if(user != null) {
+			res.json({exists: true})
+		}
+		else {
+			res.json({exists: false})
+		}
+	})
+});
+
 // Get Tweets for a given celebrity
 router.get('/getTweets/:user', function (req, res) {
 	var user = req.params.user;
@@ -181,8 +199,8 @@ router.get('/getTweets/:user', function (req, res) {
 
 	var currentTime = new Date().getTime();
 
-	// Checks if the cached data is less than 15 minutes old
-	if(TwitterCache[user] && ((currentTime - TwitterCache[user].storedAt) < 1000000)) {
+	// Checks if the cached data is less than 1 hour old
+	if(TwitterCache[user] && ((currentTime - TwitterCache[user].storedAt) < 3600000)) {
 		res.send(TwitterCache[user].data);
 	}
 	else {
@@ -196,6 +214,7 @@ router.get('/getTweets/:user', function (req, res) {
 			}
 			else {
 				console.log(error);
+				res.send({success: false});
 			}
 		});
 	}

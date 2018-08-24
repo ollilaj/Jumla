@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginService } from './login.service';
 import { SignInComponent } from './sign-in/sign-in.component';
@@ -10,7 +11,7 @@ import { routing } from '../app.routes';
 @NgModule({
 	imports: [
 		CommonModule,
-		routing,
+		RouterModule.forRoot(routing),
 		FormsModule,
 		ReactiveFormsModule
 	],

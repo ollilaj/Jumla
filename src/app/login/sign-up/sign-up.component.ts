@@ -19,31 +19,47 @@ export class SignUpComponent implements OnInit {
 	ngOnInit() {
 	}
 
-	register() : void {
+	validateInput() : void {
+		if(this.username.length < 6 || this.username.length > 16){
+			alert("Error: Username must be at least 6 characters long and no longer than 16.");
+			return;
+		} else if(this.password != this.confirmPassword) {
+			alert("Password doesn't match Confirmed Password.");
+			return;
+		} else if(this.password.length < 6 || this.password.length > 16) {
+			alert("Error: Password must be at least 6 characters long and no longer than 16.");
+			return;
+		} else {
+			this.loginService.checkUsername(this.username).subscribe(
+				(data: any) => {
+					if (data.exists === true) {
+						alert('This username already exists please try something else');
+						return;
+					} else {
+						this.registerNewUser();
+					}
+				}
+			);
+		}
+	}
+
+	registerNewUser() : void {
 		var data = {
 			username: this.username,
 			password: this.password,
 			confirmPassword: this.confirmPassword
 		};
 
-		var validInput = this.validateInput();
-
-		if(validInput) {
-			this.loginService.register(data).subscribe(
-				(response : any) => {
-					if(response.success){
-						localStorage.setItem("user", JSON.stringify(response.user));
-						this.router.navigate(['all']);
-					} else {
-						alert("Could Not Sign Up");
-					}
+		this.loginService.register(data).subscribe(
+			(response : any) => {
+				if(response.success){
+					localStorage.setItem("user", JSON.stringify(response.user));
+					this.router.navigate(['all']);
+				} else {
+					alert("Could Not Sign Up.");
 				}
-			)
-		}
-	}
-
-	validateInput() : boolean {
-		return true;
+			}
+		)
 	}
 
 }

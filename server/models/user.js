@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const crypto = require('crypto');
+const Celebrity = require('./celebrity.js');
 
 var userSchema = mongoose.Schema({
 	username: String,
@@ -58,6 +59,18 @@ module.exports.follow = function (data, callback) {
 			callback();
 		}
 	);
+};
+
+module.exports.followFirstCeleb = function (userId) {
+	Celebrity.getAllCelebrities(function(err, celebs) {
+		User.findByIdAndUpdate(userId,
+			{$push: {follows: celebs[1]._id}},
+			{safe: true},
+			function (err) {
+				if (err) console.log(err);
+			}
+		);
+	});
 };
 
 module.exports.unfollow = function (data, callback) {

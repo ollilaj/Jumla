@@ -10,7 +10,7 @@ import { NavBarModule } from '../nav-bar/nav-bar.module';
 		NavBarModule
 	],
 	declarations: [NewsComponent, NewsItemComponent],
-	exports: [NewsItemComponent]
+	exports: [NewsItemComponent, NewsComponent]
 })
 export class NewsModule {
 }

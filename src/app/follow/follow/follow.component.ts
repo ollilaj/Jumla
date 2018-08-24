@@ -1,25 +1,43 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FollowService } from '../follow.service';
 import * as $ from 'jquery';
+import { NavBarService } from '../../nav-bar/nav-bar.service';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-follow',
 	templateUrl: './follow.component.html',
 	styleUrls: ['./follow.component.css']
 })
-export class FollowComponent implements OnInit {
+export class FollowComponent implements OnInit, AfterViewInit {
 
 	public celebrities = [];
 
-	constructor(private followService : FollowService) {
+	constructor(private followService : FollowService,
+				private navBarService : NavBarService,
+				private router: Router) {
 	}
 
 	ngOnInit() {
+		this.authenticate();
 		this.followService.getCelebrities().subscribe(
 			(data : any) => {
 				this.getFollowedCelebs(data.celebs);
 			}
 		)
+	}
+
+	ngAfterViewInit(){
+		setTimeout(_ => {
+			this.navBarService.show();
+		});
+	}
+
+	authenticate() : void {
+		var user = localStorage.getItem("user");
+		if(!user){
+			this.router.navigate(['sign-in']);
+		}
 	}
 
 	getFollowedCelebs(allCelebs) : void {

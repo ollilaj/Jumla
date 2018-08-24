@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { TwitterService } from './twitter.service';
 import * as $ from 'jquery';
+import { NavBarService } from '../../nav-bar/nav-bar.service';
 
 @Component({
 	selector: 'jumla-twitter',
@@ -8,15 +10,35 @@ import * as $ from 'jquery';
 	styleUrls: ['./twitter.component.css'],
 	providers: [TwitterService]
 })
-export class TwitterComponent implements OnInit{
+export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 
 	public tweets = [];
 	private twitter: any;
 
-	constructor(private twitterService : TwitterService){}
+	constructor(private twitterService : TwitterService,
+				private navBarService : NavBarService,
+				private router: Router){}
 
 	ngOnInit(){
+		this.authenticate();
 		this.initTwitterWidget();
+	}
+
+	ngAfterViewInit(){
+		setTimeout(_ => {
+			this.navBarService.show();
+		});
+	}
+
+	ngOnDestroy(){
+
+	}
+
+	authenticate() : void {
+		var user = localStorage.getItem("user");
+		if(!user){
+			this.router.navigate(['sign-in']);
+		}
 	}
 
 	initTwitterWidget() {
@@ -36,20 +58,26 @@ export class TwitterComponent implements OnInit{
 
 			return t;
 		}(document, "script", "twitter-wjs"));
-		this.fetchTweets();
+
+		var that = this;
+		setTimeout(function(){ that.fetchTweets(); }, 1);
 	}
 
 	fetchTweets(): void {
 		var userId = JSON.parse(localStorage.getItem("user")).id;
 		this.twitterService.getCelebsTheyFollow(userId).subscribe(
 			(celebData : any) => {
-				this.twitterService.getTweets(celebData.celebs).subscribe(
-					(twitterData : any) => {
-						this.tweets = this.concatArrays(twitterData);
-						this.sortTweets();
-						this.visualizeTweets();
-					}
-				);
+				if(celebData.success && celebData.celebs.length > 0) {
+					this.twitterService.getTweets(celebData.celebs).subscribe(
+						(twitterData : any) => {
+							this.tweets = this.concatArrays(twitterData);
+							this.sortTweets();
+							this.visualizeTweets();
+						}
+					);
+				} else {
+					alert("Error: Couldn't find followed Celebrities");
+				}
 			}
 		)
 	}
