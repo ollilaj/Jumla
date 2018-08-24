@@ -8,5 +8,5 @@ var celebritySchema = mongoose.Schema({
 const Celebrity = module.exports = mongoose.model('Celebrity', celebritySchema);
 
 module.exports.getAllCelebrities = function (callback) {
-	Celebrity.find().exec(callback);
+	Celebrity.find().sort('name').exec(callback);
 };
