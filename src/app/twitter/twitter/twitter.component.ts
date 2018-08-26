@@ -60,7 +60,7 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 		}(document, "script", "twitter-wjs"));
 
 		var that = this;
-		setTimeout(function(){ that.fetchTweets(); }, 1);
+		setTimeout(function(){ that.fetchTweets(); }, 100);
 	}
 
 	fetchTweets(): void {
