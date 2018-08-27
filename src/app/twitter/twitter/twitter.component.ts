@@ -104,9 +104,9 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 		for(let tweet of this.tweets) {
 			var newTweet = document.createElement("div");
 			newTweet.classList.add("item-twitter");
-			newTweet.style.width = '500px';
-			newTweet.style.margin = 'auto';
-			newTweet.style.padding = '25px 0';
+			//newTweet.style.width = '500px';
+			//newTweet.style.margin = 'auto';
+			//newTweet.style.padding = '25px 0';
 
 			var tweetContainer = document.getElementById("tweet-container");
 			tweetContainer.appendChild(newTweet);
@@ -115,7 +115,8 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 				tweet.id_str, newTweet,
 				{
 					conversation : 'none',    // or all
-					cards        : 'visible'  // or visible
+					cards        : 'visible',  // or visible
+					align        : 'center'
 				}
 			);
 		}

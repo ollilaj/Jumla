@@ -134,6 +134,10 @@ router.get('/createCelebrityData', function(req, res){
 
 });
 
+router.get('/getRateLimitStatus', function(req, res){
+
+});
+
 router.post('/register', function(req, res){
 	var user = new User();
 	user.username = req.body.username;
@@ -204,12 +208,14 @@ router.get('/getTweets/:user', function (req, res) {
 		res.send(TwitterCache[user].data);
 	}
 	else {
-		client.get('statuses/user_timeline', params, function(error, tweets) {
+		client.get('statuses/user_timeline', params, function(error, tweets, respy) {
 			if (!error) {
 				TwitterCache[user] = {
 					storedAt: new Date().getTime(),
 					data: tweets
 				};
+				// This is where the information about rate limits is contained
+				//console.log(respy.headers);
 				res.send(tweets);
 			}
 			else {
