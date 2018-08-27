@@ -27,6 +27,11 @@
   font-size: 26px;
   line-height: 30px;
 }
+@media screen and (max-width: 500px) {
+  #settings-cont #celebrities-cont .celebrity-item .celebrity-name {
+    font-size: 18px;
+  }
+}
 #settings-cont #celebrities-cont .celebrity-item .follow-button-cont {
   display: inline-block;
   float: right;
