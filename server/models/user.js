@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const crypto = require('crypto');
 const Celebrity = require('./celebrity.js');
 
-var userSchema = mongoose.Schema({
+let userSchema = mongoose.Schema({
 	username: String,
 	hash: String,
 	salt: String,
@@ -14,12 +14,11 @@ var userSchema = mongoose.Schema({
 const User = module.exports = mongoose.model('User', userSchema);
 
 module.exports.getUserById = function (id, callback) {
-	User.findById(id, callback);
+	User.findOne({_id: id}, callback);
 };
 
 module.exports.getUserByUsername = function (username, callback) {
-	const query = {username: username};
-	User.findOne(query, callback);
+	User.findOne({username: username}, callback);
 };
 
 module.exports.setPassword = function (user, password) {
@@ -28,34 +27,34 @@ module.exports.setPassword = function (user, password) {
 };
 
 module.exports.validPassword = function (user, password) {
-	var hash = crypto.pbkdf2Sync(password, user.salt, 1000, 64, 'sha512').toString('hex');
+	let hash = crypto.pbkdf2Sync(password, user.salt, 1000, 64, 'sha512').toString('hex');
 	return user.hash === hash;
 };
 
 module.exports.updatePassword = function (user, callback) {
-
-	var newPassword = user.newPassword;
-
-	User.findById(user._id,function (err,user) {
-		if(err){
-			throw(err);
-		}
+	let newPassword = user.newPassword;
+	User.findOne({_id: user._id}, function (err,user) {
+		if (err) throw (err);
 		User.setPassword(user,newPassword);
 		user.save(callback);
-
 	});
 };
 
 module.exports.getCelebrities = function (userId, callback) {
-	User.findById(userId).populate('follows').exec(callback);
+	User.findOne({_id: userId})
+		.populate('follows')
+		.exec(function (err, celebs) {
+			if (err) throw (err);
+			callback(err, celebs);
+		});
 };
 
 module.exports.follow = function (data, callback) {
-	User.findByIdAndUpdate(data.userId,
+	User.findOneAndUpdate({_id: data.userId},
 		{$push: {follows: data.celebrityId}},
 		{safe: true},
 		function (err) {
-			if (err) console.log(err);
+			if (err) throw (err);
 			callback();
 		}
 	);
@@ -63,22 +62,22 @@ module.exports.follow = function (data, callback) {
 
 module.exports.followFirstCeleb = function (userId) {
 	Celebrity.getAllCelebrities(function(err, celebs) {
-		User.findByIdAndUpdate(userId,
+		User.findOneAndUpdate({_id: userId},
 			{$push: {follows: celebs[1]._id}},
 			{safe: true},
 			function (err) {
-				if (err) console.log(err);
+				if (err) throw (err);
 			}
 		);
 	});
 };
 
 module.exports.unfollow = function (data, callback) {
-	User.findByIdAndUpdate(data.userId,
+	User.findOneAndUpdate({_id: data.userId},
 		{$pull: {follows: data.celebrityId}},
 		{safe: true},
 		function (err) {
-			if (err) console.log(err);
+			if (err) throw (err);
 			callback();
 		}
 	);

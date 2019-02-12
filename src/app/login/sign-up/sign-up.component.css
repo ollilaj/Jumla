@@ -7,44 +7,71 @@
   position: relative;
   top: 50%;
   transform: translateY(-55%);
+  display: block;
+  margin: auto;
+  max-width: 500px;
+  width: 100%;
+  padding: 0 10px;
 }
-#screen #sign-up-cont .header img {
+#screen #sign-up-cont #logo {
+  display: block;
+  margin: auto;
+  width: 100%;
+}
+#screen #sign-up-cont #logo img {
   height: 150px;
   width: 150px;
   display: block;
   margin: auto;
 }
-#screen #sign-up-cont .panel-heading .tab {
+#screen #sign-up-cont #form-header {
+  width: 100%;
+  display: block;
+  margin: auto;
+  height: 34px;
+}
+#screen #sign-up-cont #form-header .tab {
+  display: inline-block;
+  width: 50%;
   text-align: center;
-  font-size: 20px;
-  cursor: pointer;
-}
-#screen #sign-up-cont .panel-heading .tab a {
-  text-decoration: none;
-}
-#screen #sign-up-cont .panel-heading .active {
-  color: #393e46;
   font-size: 24px;
-  font-weight: bold;
-  text-decoration: none;
-  transition: all 0.1s linear;
+  cursor: pointer;
+  float: left;
 }
-#screen #sign-up-cont .panel-heading hr {
+#screen #sign-up-cont #form-header .tab a {
+  text-decoration: none;
+}
+#screen #sign-up-cont #form-header .active {
+  color: #ffd633;
+  text-decoration: none;
+}
+#screen #sign-up-cont hr {
+  width: 100%;
   margin-top: 10px;
-  margin-bottom: 0;
-  clear: both;
   border: 0;
-  height: 1px;
+  height: 2px;
   background-image: -webkit-linear-gradient(left, transparent, rgba(0, 0, 0, 0.25), transparent);
 }
-#screen #sign-up-cont .panel-body .btn {
+#screen #sign-up-cont #form-cont {
+  width: 100%;
+  display: block;
+  margin: auto;
+}
+#screen #sign-up-cont #form-cont input {
+  margin: 10px 0;
+}
+#screen #sign-up-cont #form-cont .submit-cont {
+  text-align: center;
+}
+#screen #sign-up-cont #form-cont .submit-cont .btn {
+  display: inline-block;
   background-color: #393e46;
   outline: none;
   color: white;
   font-size: 14px;
   height: auto;
   font-weight: normal;
-  padding: 14px 0;
+  padding: 15px 40px;
   text-transform: uppercase;
   border-color: #393e46;
 }

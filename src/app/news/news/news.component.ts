@@ -12,6 +12,7 @@ import { NavBarService } from '../../nav-bar/nav-bar.service';
 })
 export class NewsComponent implements OnInit, AfterViewInit {
 
+	public userId;
 	public articles = [];
 
 	constructor(private newsService : NewsService,
@@ -20,7 +21,6 @@ export class NewsComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		this.authenticate();
-		this.fetchNews();
 	}
 
 	ngAfterViewInit(){
@@ -30,9 +30,11 @@ export class NewsComponent implements OnInit, AfterViewInit {
 	}
 
 	authenticate() : void {
-		var user = localStorage.getItem("user");
-		if(!user){
+		if(!localStorage.getItem("user")){
 			this.router.navigate(['sign-in']);
+		} else {
+			this.userId = JSON.parse(localStorage.getItem("user")).id;
+			this.fetchNews();
 		}
 	}
 
@@ -42,37 +44,38 @@ export class NewsComponent implements OnInit, AfterViewInit {
 	fetchNews() : void {
 		this.newsService.getFeeds().subscribe(
 			(response : any) => {
-				this.refineResultsFromFeeds(response.data);
+				if(response.data.length > 0) {
+					this.refineResultsFromFeeds(response.data);
+				}
 			}
 		)
 	}
 
 	refineResultsFromFeeds(rssItems) : void {
 		rssItems = this.sortRSSItems(rssItems);
-		var userId = JSON.parse(localStorage.getItem("user")).id;
-		this.newsService.getCelebrities(userId).subscribe(
+
+		this.newsService.getCelebrities(this.userId).subscribe(
 			(data : any) => {
 				if(data.success && data.celebs.length > 0) {
-					var celebrities = data.celebs;
-					for(var i = 0; i < rssItems.length; i++) {
-						for(var j = 0; j < celebrities.length; j++) {
+					let celebrities = data.celebs;
+					for(let i = 0; i < rssItems.length; i++) {
+						for(let j = 0; j < celebrities.length; j++) {
 							if(rssItems[i].title.indexOf(celebrities[j].name) > -1){
 								this.articles.push(rssItems[i]);
 							}
 						}
 					}
 				} else {
-					alert("Error: Couldn't find followed Celebrities");
-					return [];
+					alert("Error: No recent news for the celebrities you follow!");
 				}
 			}
 		);
 	}
 
 	sortRSSItems(rssItems) : any[] {
-		var orderedArray = rssItems.sort(function(a,b){
-			var c;
-			var d;
+		let orderedArray = rssItems.sort(function(a,b){
+			let c;
+			let d;
 
 			if(a.date){
 				c = a.date;

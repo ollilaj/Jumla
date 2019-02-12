@@ -12,6 +12,7 @@ import { NavBarService } from '../../nav-bar/nav-bar.service';
 })
 export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 
+	public userId;
 	public tweets = [];
 	private twitter: any;
 
@@ -35,9 +36,10 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 	}
 
 	authenticate() : void {
-		var user = localStorage.getItem("user");
-		if(!user){
+		if(!localStorage.getItem("user")){
 			this.router.navigate(['sign-in']);
+		} else {
+			this.userId = JSON.parse(localStorage.getItem("user")).id;
 		}
 	}
 
@@ -59,13 +61,12 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 			return t;
 		}(document, "script", "twitter-wjs"));
 
-		var that = this;
+		let that = this;
 		setTimeout(function(){ that.fetchTweets(); }, 100);
 	}
 
 	fetchTweets(): void {
-		var userId = JSON.parse(localStorage.getItem("user")).id;
-		this.twitterService.getCelebsTheyFollow(userId).subscribe(
+		this.twitterService.getCelebsTheyFollow(this.userId).subscribe(
 			(celebData : any) => {
 				if(celebData.success && celebData.celebs.length > 0) {
 					this.twitterService.getTweets(celebData.celebs).subscribe(
@@ -83,7 +84,7 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 	}
 
 	concatArrays(arrays) : any[] {
-		var singleArray = [];
+		let singleArray = [];
 		for(let array of arrays) {
 			singleArray = singleArray.concat(array);
 		}
@@ -92,8 +93,8 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 
 	sortTweets() : void {
 		this.tweets = this.tweets.sort(function(a,b){
-			var c = a.created_at;
-			var d = b.created_at;
+			let c = a.created_at;
+			let d = b.created_at;
 
 			return (new Date(c).getTime()) - (new Date(d).getTime());
 		});
@@ -102,13 +103,10 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 
 	visualizeTweets(): void {
 		for(let tweet of this.tweets) {
-			var newTweet = document.createElement("div");
+			let newTweet = document.createElement("div");
 			newTweet.classList.add("item-twitter");
-			//newTweet.style.width = '500px';
-			//newTweet.style.margin = 'auto';
-			//newTweet.style.padding = '25px 0';
 
-			var tweetContainer = document.getElementById("tweet-container");
+			let tweetContainer = document.getElementById("tweet-container");
 			tweetContainer.appendChild(newTweet);
 
 			(<any>window).twttr.widgets.createTweet(

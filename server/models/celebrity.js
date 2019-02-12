@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-var celebritySchema = mongoose.Schema({
+let celebritySchema = mongoose.Schema({
 	name: String,
 	twitterId: String
 });

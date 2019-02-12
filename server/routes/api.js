@@ -1,26 +1,27 @@
+// Libraries
 const express = require('express');
 const router = express.Router();
-const Twitter = require('twitter');
-const https = require('https');
-const YUI = require('yui').YUI;
+const cron = require('node-cron');
+const Parser = require('rss-parser');
+const parser = new Parser();
 
 // Models
 const User = require('../models/user.js');
 const Celebrity = require('../models/celebrity.js');
 
-const client = new Twitter({
-	consumer_key: 'YqPX7shzZ5kSVPYs1sfzR1sBM',
-	consumer_secret: 'MfWjahGj4n7GQMnKJtcpfe9oFWRXXh3v0VLXOO6MTlEpJqnCj9',
-	access_token_key: '2564360821-6ff4NGFdrOLMlrDIBxVEh5GKsrwxcl8cDr4ARPI',
-	access_token_secret: 'UxFcj1O4h3VgoFjXUyVWAqE6kROcFsZPpVPQQMH9Fnm5B'
-});
+// Controllers
+const TwitterCacheController = require("../controllers/twitter-cache.controller");
 
-var TwitterCache = {};
+let TwitterCache = {};
+
+cron.schedule('*/15 * * * *', () => {
+	TwitterCacheController.cacheTwitterData();
+});
 
 // Used to create the celebrity data
 router.get('/createCelebrityData', function(req, res){
 
-	var celebrities = ["Adele",
+	let celebrities = ["Adele",
 		"Ariana Grande",
 		"Ashley Benson",
 		"Bella Hadid",
@@ -70,7 +71,7 @@ router.get('/createCelebrityData', function(req, res){
 		"Zayn",
 		"Zendaya"
 	];
-	var twitterNames = ["adele",
+	let twitterNames = ["adele",
 		"arianagrande",
 		"ashbenzo",
 		"bellahadid",
@@ -121,9 +122,9 @@ router.get('/createCelebrityData', function(req, res){
 		"zendaya"
 	];
 
-	var celeb;
+	let celeb;
 
-	/*for(var i = 0; i < celebrities.length; i++) {
+	/*for(let i = 0; i < celebrities.length; i++) {
 		celeb = new Celebrity();
 		celeb.name = celebrities[i];
 		celeb.twitterId = twitterNames[i];
@@ -134,12 +135,8 @@ router.get('/createCelebrityData', function(req, res){
 
 });
 
-router.get('/getRateLimitStatus', function(req, res){
-
-});
-
 router.post('/register', function(req, res){
-	var user = new User();
+	let user = new User();
 	user.username = req.body.username;
 	User.setPassword(user, req.body.password);
 	user.follows = [];
@@ -159,8 +156,8 @@ router.post('/register', function(req, res){
 });
 
 router.post('/authenticate', function(req,res){
-	var username = req.body.username;
-	var password = req.body.password;
+	let username = req.body.username;
+	let password = req.body.password;
 
 	User.getUserByUsername(username, function(err, user){
 		if (err) throw err;
@@ -184,7 +181,7 @@ router.post('/authenticate', function(req,res){
 
 // Check for duplicate user
 router.get('/checkForUserName/:username', function (req,res) {
-	var username = req.params.username;
+	let username = req.params.username;
 	User.getUserByUsername(username, function (err,user) {
 		if(err) throw err;
 		if(user != null) {
@@ -198,58 +195,42 @@ router.get('/checkForUserName/:username', function (req,res) {
 
 // Get Tweets for a given celebrity
 router.get('/getTweets/:user', function (req, res) {
-	var user = req.params.user;
-	var params = {screen_name: user, count: '5'};
+	let user = req.params.user;
 
-	var currentTime = new Date().getTime();
-
-	// Checks if the cached data is less than 1 hour old
-	if(TwitterCache[user] && ((currentTime - TwitterCache[user].storedAt) < 3600000)) {
+	if(TwitterCache[user]) {
 		res.send(TwitterCache[user].data);
-	}
-	else {
-		client.get('statuses/user_timeline', params, function(error, tweets, respy) {
-			if (!error) {
-				TwitterCache[user] = {
-					storedAt: new Date().getTime(),
-					data: tweets
-				};
-				// This is where the information about rate limits is contained
-				//console.log(respy.headers);
-				res.send(tweets);
-			}
-			else {
-				console.log(error);
-				res.send({success: false});
-			}
-		});
+	} else {
+		// next(error)
 	}
 });
 
 // Get items from the specified rss feeds
 router.get('/getRSSFeeds', function(req, res){
-	YUI().use('yql', function(Y){
-		var query = 'select * from rss where url in (' +
-			'"http://syndication.eonline.com/syndication/feeds/rssfeeds/topstories.xml",' +
-			'"http://www.tmz.com/rss.xml",' +
-			'"http://syndication.eonline.com/syndication/feeds/rssfeeds/redcarpet.xml",' +
-			'"http://syndication.eonline.com/syndication/feeds/rssfeeds/tvnews.xml",' +
-			'"http://syndication.eonline.com/syndication/feeds/rssfeeds/fashion.xml",' +
-			'"http://syndication.eonline.com/syndication/feeds/rssfeeds/style.xml")';
+	(async () => {
+		let urls = ['http://syndication.eonline.com/syndication/feeds/rssfeeds/topstories.xml',
+					 'http://www.tmz.com/rss.xml',
+					 'http://syndication.eonline.com/syndication/feeds/rssfeeds/redcarpet.xml',
+					 'http://syndication.eonline.com/syndication/feeds/rssfeeds/tvnews.xml',
+					 'http://syndication.eonline.com/syndication/feeds/rssfeeds/fashion.xml',
+					 'http://syndication.eonline.com/syndication/feeds/rssfeeds/style.xml'];
 
-		Y.YQL(query, function(r){
-			if(r.query.results){
-				res.json({data: r.query.results.item});
-			}
-		})
-	});
+		let feeds = await Promise.all(urls.map(async(url) => await parser.parseURL(url)));
+
+		// Consolidate into one array
+		let items = feeds.reduce((acc, item) => acc.concat(item.items), []);
+
+		res.json({data: items});
+	})();
 });
 
 router.get('/getCelebsTheyFollow/:userId', function(req, res){
-	var userId = req.params.userId;
+	let userId = req.params.userId;
 	User.getCelebrities(userId, function(err, celebs){
-		if (err) throw err;
-		else {
+		if (err) {
+			res.json({
+				success: false
+			});
+		} else {
 			res.json({
 				success: true,
 				celebs: celebs.follows
@@ -268,9 +249,9 @@ router.get('/getAllCelebrities', function(req, res){
 });
 
 router.post('/follow', function(req, res){
-	var celebrityId = req.body.celebrityId;
-	var userId = req.body.userId;
-	var data = {
+	let celebrityId = req.body.celebrityId;
+	let userId = req.body.userId;
+	let data = {
 		celebrityId: celebrityId,
 		userId: userId
 	};
@@ -280,20 +261,15 @@ router.post('/follow', function(req, res){
 });
 
 router.post('/unfollow', function(req, res){
-	var celebrityId = req.body.celebrityId;
-	var userId = req.body.userId;
-	var data = {
+	let celebrityId = req.body.celebrityId;
+	let userId = req.body.userId;
+	let data = {
 		celebrityId: celebrityId,
 		userId: userId
 	};
 	User.unfollow(data, function(){
 		res.json({success: true});
 	});
-});
-
-// Catch all other api routes and return no page found
-router.get('*', function(req, res) {
-	res.send("No page found");
 });
 
 module.exports = router;
