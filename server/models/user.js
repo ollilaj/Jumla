@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const crypto = require('crypto');
 const Celebrity = require('./celebrity.js');
 
 let userSchema = mongoose.Schema({
@@ -12,6 +11,14 @@ let userSchema = mongoose.Schema({
 });
 
 const User = module.exports = mongoose.model('User', userSchema);
+
+module.exports.create = function(username, password, callback) {
+	let user = new User();
+	user.username = username;
+	User.setPassword(user, password);
+	user.follows = [];
+	user.save(callback);
+};
 
 module.exports.getUserById = function (id, callback) {
 	User.findOne({_id: id}, callback);
@@ -31,6 +38,7 @@ module.exports.validPassword = function (user, password) {
 	return user.hash === hash;
 };
 
+/*
 module.exports.updatePassword = function (user, callback) {
 	let newPassword = user.newPassword;
 	User.findOne({_id: user._id}, function (err,user) {
@@ -39,46 +47,39 @@ module.exports.updatePassword = function (user, callback) {
 		user.save(callback);
 	});
 };
+*/
 
 module.exports.getCelebrities = function (userId, callback) {
 	User.findOne({_id: userId})
 		.populate('follows')
-		.exec(function (err, celebs) {
-			if (err) throw (err);
-			callback(err, celebs);
-		});
+		.exec(callback);
 };
 
 module.exports.follow = function (data, callback) {
-	User.findOneAndUpdate({_id: data.userId},
+	User.findOneAndUpdate(
+		{_id: data.userId},
 		{$push: {follows: data.celebrityId}},
 		{safe: true},
-		function (err) {
-			if (err) throw (err);
-			callback();
-		}
+		callback
 	);
-};
-
-module.exports.followFirstCeleb = function (userId) {
-	Celebrity.getAllCelebrities(function(err, celebs) {
-		User.findOneAndUpdate({_id: userId},
-			{$push: {follows: celebs[1]._id}},
-			{safe: true},
-			function (err) {
-				if (err) throw (err);
-			}
-		);
-	});
 };
 
 module.exports.unfollow = function (data, callback) {
-	User.findOneAndUpdate({_id: data.userId},
+	User.findOneAndUpdate(
+		{_id: data.userId},
 		{$pull: {follows: data.celebrityId}},
 		{safe: true},
-		function (err) {
-			if (err) throw (err);
-			callback();
-		}
+		callback
 	);
+};
+
+module.exports.followFirstCelebs = function (userId) {
+	Celebrity.getAllCelebrities(function(err, celebs) {
+		User.findOneAndUpdate(
+			{_id: userId},
+			{$push: {follows: {$each: [celebs[0]._id, celebs[1]._id, celebs[2]._id,celebs[3]._id, celebs[4]._id]}}},
+			{safe: true}
+			// Maybe add callback here in the future?
+		);
+	});
 };

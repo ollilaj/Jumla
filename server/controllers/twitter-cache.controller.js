@@ -9,7 +9,7 @@ const client = new Twitter({
 
 const Celebrity = require('../models/celebrity.js');
 
-let TwitterCache = {};
+let twitterCache = {};
 
 exports.cacheTwitterData = () => {
 
@@ -17,19 +17,21 @@ exports.cacheTwitterData = () => {
 		if (err) throw err;
 		else {
 			for(let i = 0; i < celebs.length; i++) {
-				client.get('statuses/user_timeline', {screen_name: celebs[i], count: '5'}, function(error, tweets, responseData) {
-					if (!error) {
-						TwitterCache[user] = {
+				client.get('statuses/user_timeline', {screen_name: celebs[i], count: '5'}, function(twitterError, tweets, responseData) {
+					if (twitterError) throw error;
+					else {
+						twitterCache[user] = {
 							storedAt: new Date().getTime(),
 							data: tweets
 						};
-					}
-					else {
-						console.log(error);
 					}
 				});
 			}
 		}
 	});
 
+};
+
+exports.getTwitterCache = () => {
+	return twitterCache;
 };

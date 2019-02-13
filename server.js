@@ -1,8 +1,14 @@
+// Libraries
 const express = require("express");
 const path = require('path');
 const bodyParser = require("body-parser");
+
+// Vars
 const app = express();
 const api = require('./server/routes/api.js');
+const TwitterCacheController = require("../controllers/twitter-cache.controller");
+
+TwitterCacheController.cacheTwitterData();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -12,6 +18,13 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Set our api routes
 app.use('/api', api);
+
+// Send Error back to client
+app.use(function(err, req, res) {
+	let status = err.status || 500;
+	let message = err.message || 'Unknown Error';
+	return res.status(status).send(message);
+});
 
 // Redirect all other routes to Angular
 app.get('*', function(req, res) {
@@ -24,8 +37,8 @@ app.listen(3000, function(){
 });
 
 // Database Configuration
-var dbConfig = require("./server/config/database-config.js");
-var mongoose = require("mongoose");
+let dbConfig = require("./server/config/database-config.js");
+let mongoose = require("mongoose");
 
 mongoose.Promise = global.Promise;
 

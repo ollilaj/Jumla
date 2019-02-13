@@ -1,9 +1,7 @@
 // Libraries
 const express = require('express');
-const router = express.Router();
 const cron = require('node-cron');
 const Parser = require('rss-parser');
-const parser = new Parser();
 
 // Models
 const User = require('../models/user.js');
@@ -12,7 +10,9 @@ const Celebrity = require('../models/celebrity.js');
 // Controllers
 const TwitterCacheController = require("../controllers/twitter-cache.controller");
 
-let TwitterCache = {};
+// Vars
+const router = express.Router();
+const parser = new Parser();
 
 cron.schedule('*/15 * * * *', () => {
 	TwitterCacheController.cacheTwitterData();
@@ -136,22 +136,15 @@ router.get('/createCelebrityData', function(req, res){
 });
 
 router.post('/register', function(req, res){
-	let user = new User();
-	user.username = req.body.username;
-	User.setPassword(user, req.body.password);
-	user.follows = [];
-	user.save(function (err, user) {
-		if (err) throw err;
-		else {
-			User.followFirstCeleb(user._id);
-			res.json({
-				success: true,
-				user: {
-					id: user._id,
-					username: user.username
-				}
-			});
-		}
+	let username = req.body.username;
+	let password = req.body.password;
+	User.create(username, password, function(err, user) {
+		if (err)
+			return next(err);
+
+		User.followFirstCelebs(user._id);
+
+		return res.json({user: {id: user._id, username: user.username}});
 	});
 });
 
@@ -160,92 +153,100 @@ router.post('/authenticate', function(req,res){
 	let password = req.body.password;
 
 	User.getUserByUsername(username, function(err, user){
-		if (err) throw err;
-		if (!user) {
-			return res.json({success: false, msg: 'User not found'});
-		}
+		if (err)
+			return next(err);
 
-		if (User.validPassword(user, password)) {
-			return res.json({
-				success: true,
-				user: {
-					id: user._id,
-					username: user.username
-				}
-			});
-		} else {
-			return res.json({success: false, msg: 'Wrong password'});
-		}
+		if (!user)
+			return next(new Error("User not found"));
+
+		if (!User.validPassword(user, password))
+			return next(new Error("Wrong password"));
+
+		return res.json({user: {id: user._id, username: user.username}});
 	});
 });
 
 // Check for duplicate user
 router.get('/checkForUserName/:username', function (req,res) {
 	let username = req.params.username;
-	User.getUserByUsername(username, function (err,user) {
-		if(err) throw err;
-		if(user != null) {
-			res.json({exists: true})
-		}
-		else {
-			res.json({exists: false})
-		}
-	})
+	try {
+		User.getUserByUsername(username, function (err, user) {
+			if(err)
+				return next(err);
+
+			if(user)
+				return next(new Error("User already exists"));
+
+			return res.json({exists: false})
+		})
+	} catch (err) {
+		return next(err);
+	}
 });
 
 // Get Tweets for a given celebrity
 router.get('/getTweets/:user', function (req, res) {
 	let user = req.params.user;
+	try {
+		let twitterCache = TwitterCacheController.getTwitterCache();
+		if(twitterCache[user])
+			return res.json({data: twitterCache[user].data});
 
-	if(TwitterCache[user]) {
-		res.send(TwitterCache[user].data);
-	} else {
-		// next(error)
+		return next(new Error("No cached data for Twitter"));
+	} catch(err) {
+		return next(err);
 	}
 });
 
 // Get items from the specified rss feeds
 router.get('/getRSSFeeds', function(req, res){
-	(async () => {
-		let urls = ['http://syndication.eonline.com/syndication/feeds/rssfeeds/topstories.xml',
-					 'http://www.tmz.com/rss.xml',
-					 'http://syndication.eonline.com/syndication/feeds/rssfeeds/redcarpet.xml',
-					 'http://syndication.eonline.com/syndication/feeds/rssfeeds/tvnews.xml',
-					 'http://syndication.eonline.com/syndication/feeds/rssfeeds/fashion.xml',
-					 'http://syndication.eonline.com/syndication/feeds/rssfeeds/style.xml'];
+	try {
+		(async () => {
+			let urls = ['http://syndication.eonline.com/syndication/feeds/rssfeeds/topstories.xml',
+				'http://www.tmz.com/rss.xml',
+				'http://syndication.eonline.com/syndication/feeds/rssfeeds/redcarpet.xml',
+				'http://syndication.eonline.com/syndication/feeds/rssfeeds/tvnews.xml',
+				'http://syndication.eonline.com/syndication/feeds/rssfeeds/fashion.xml',
+				'http://syndication.eonline.com/syndication/feeds/rssfeeds/style.xml'];
 
-		let feeds = await Promise.all(urls.map(async(url) => await parser.parseURL(url)));
+			// Awaits all async requests for feeds to return
+			let feeds = await Promise.all(urls.map(async(url) => await parser.parseURL(url)));
 
-		// Consolidate into one array
-		let items = feeds.reduce((acc, item) => acc.concat(item.items), []);
+			// Consolidate into one array
+			let items = feeds.reduce((acc, item) => acc.concat(item.items), []);
 
-		res.json({data: items});
-	})();
+			return res.json({data: items});
+		})();
+	} catch(err) {
+		return next(err);
+	}
 });
 
 router.get('/getCelebsTheyFollow/:userId', function(req, res){
 	let userId = req.params.userId;
-	User.getCelebrities(userId, function(err, celebs){
-		if (err) {
-			res.json({
-				success: false
-			});
-		} else {
-			res.json({
-				success: true,
-				celebs: celebs.follows
-			});
-		}
-	});
+	try {
+		User.getCelebrities(userId, function(err, celebs){
+			if (err)
+				return next(err);
+
+			return res.json({celebs: celebs.follows});
+		});
+	} catch(err) {
+		return next(err);
+	}
 });
 
 router.get('/getAllCelebrities', function(req, res){
-	Celebrity.getAllCelebrities(function(err, celebs){
-		if (err) throw err;
-		else {
-			res.json({celebs: celebs});
-		}
-	});
+	try {
+		Celebrity.getAllCelebrities(function(err, celebs){
+			if (err)
+				return next(err);
+
+			return res.json({celebs: celebs});
+		});
+	} catch(err) {
+		return next(err);
+	}
 });
 
 router.post('/follow', function(req, res){
@@ -255,9 +256,16 @@ router.post('/follow', function(req, res){
 		celebrityId: celebrityId,
 		userId: userId
 	};
-	User.follow(data, function(){
-		res.json({success: true});
-	});
+	try {
+		User.follow(data, function(err){
+			if(err)
+				return next(err);
+
+			res.json({success: true});
+		});
+	} catch(err) {
+		return next(err);
+	}
 });
 
 router.post('/unfollow', function(req, res){
@@ -267,9 +275,16 @@ router.post('/unfollow', function(req, res){
 		celebrityId: celebrityId,
 		userId: userId
 	};
-	User.unfollow(data, function(){
-		res.json({success: true});
-	});
+	try {
+		User.unfollow(data, function(err){
+			if(err)
+				return next(err);
+
+			res.json({success: true});
+		});
+	} catch(err) {
+		return next(err);
+	}
 });
 
 module.exports = router;
