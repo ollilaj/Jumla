@@ -21,6 +21,7 @@ app.use('/api', api);
 
 // Send Error back to client
 app.use(function(err, req, res) {
+	console.log("Error triggered");
 	let status = err.status || 500;
 	let message = err.message || 'Unknown Error';
 	return res.status(status).send(message);

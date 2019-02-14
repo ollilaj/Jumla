@@ -24,18 +24,17 @@ export class SignInComponent implements OnInit {
 	}
 
 	authenticate() : void {
-		var data = {
+		let data = {
 			username: this.username,
 			password: this.password
 		};
 		this.loginService.authenticate(data).subscribe(
-			(response : any) => {
-				if(response.success) {
-					localStorage.setItem("user", JSON.stringify(response.user));
-					this.router.navigate(['all']);
-				} else {
-					alert("Error: " + response.msg);
-				}
+			user => {
+				localStorage.setItem("user", JSON.stringify(user.user));
+				this.router.navigate(['all']);
+			},
+			error => {
+				//toastr.error(error.message);
 			}
 		)
 	}

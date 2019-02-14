@@ -21,8 +21,11 @@ export class FollowComponent implements OnInit, AfterViewInit {
 	ngOnInit() {
 		this.authenticate();
 		this.followService.getCelebrities().subscribe(
-			(data : any) => {
-				this.getFollowedCelebs(data.celebs);
+			 celebs => {
+				this.getFollowedCelebs(celebs.celebs);
+			},
+			error => {
+			 	//toastr.error(error.message);
 			}
 		)
 	}
@@ -34,32 +37,34 @@ export class FollowComponent implements OnInit, AfterViewInit {
 	}
 
 	authenticate() : void {
-		var user = localStorage.getItem("user");
-		if(!user){
+		if(!localStorage.getItem("user")){
 			this.router.navigate(['sign-in']);
 		}
 	}
 
 	getFollowedCelebs(allCelebs) : void {
-		var userString = localStorage.getItem("user");
-		var userId = JSON.parse(userString).id;
+		let userString = localStorage.getItem("user");
+		let userId = JSON.parse(userString).id;
 		this.followService.getCelebsTheyFollow(userId).subscribe(
-			(data : any) => {
-				if(data.celebs && data.celebs.length > 0) {
-					this.setFollowedCelebs(allCelebs, data.celebs);
+			celebs => {
+				if(celebs.celebs && celebs.celebs.length > 0) {
+					this.setFollowedCelebs(allCelebs, celebs.celebs);
 				} else {
 					this.celebrities = allCelebs;
 				}
+			},
+			error => {
+				//toastr.error(error.message);
 			}
 		)
 	}
 
 	setFollowedCelebs(allCelebs, followedCelebs) : void {
 
-		var currentCelebId, currentFollowedCelebId;
-		for(var i = 0; i < allCelebs.length; i++) {
+		let currentCelebId, currentFollowedCelebId;
+		for(let i = 0; i < allCelebs.length; i++) {
 			currentCelebId = allCelebs[i]._id;
-			for(var j = 0; j < followedCelebs.length; j++) {
+			for(let j = 0; j < followedCelebs.length; j++) {
 				currentFollowedCelebId = followedCelebs[j]._id;
 
 				if(currentCelebId == currentFollowedCelebId){
@@ -72,29 +77,35 @@ export class FollowComponent implements OnInit, AfterViewInit {
 	}
 
 	follow(event) : void {
-		var celebrityId = $(event.target).closest(".celebrity-item").attr("data-celebid");
-		var currentUserId = JSON.parse(localStorage.getItem("user")).id;
-		var data = {
+		let celebrityId = $(event.target).closest(".celebrity-item").attr("data-celebid");
+		let currentUserId = JSON.parse(localStorage.getItem("user")).id;
+		let data = {
 			celebrityId: celebrityId,
 			userId: currentUserId
 		};
 		this.followService.followCelebrity(data).subscribe(
-			(data : any) => {
+			success => {
 				this.celebrities.find(celeb => celeb._id === celebrityId).isFollowed = true;
+			},
+			error => {
+				//toastr.error(error.message);
 			}
 		)
 	}
 
 	unfollow(event) : void {
-		var celebrityId = $(event.target).closest(".celebrity-item").attr("data-celebid");
-		var currentUserId = JSON.parse(localStorage.getItem("user")).id;
-		var data = {
+		let celebrityId = $(event.target).closest(".celebrity-item").attr("data-celebid");
+		let currentUserId = JSON.parse(localStorage.getItem("user")).id;
+		let data = {
 			celebrityId: celebrityId,
 			userId: currentUserId
 		};
 		this.followService.unfollowCelebrity(data).subscribe(
-			(data : any) => {
+			success => {
 				this.celebrities.find(celeb => celeb._id === celebrityId).isFollowed = false;
+			},
+			error => {
+				//toastr.error(error.message);
 			}
 		)
 	}

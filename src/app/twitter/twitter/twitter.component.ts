@@ -67,18 +67,19 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 
 	fetchTweets(): void {
 		this.twitterService.getCelebsTheyFollow(this.userId).subscribe(
-			(celebData : any) => {
-				if(celebData.success && celebData.celebs.length > 0) {
-					this.twitterService.getTweets(celebData.celebs).subscribe(
+			celebs => {
+				if(celebs.celebs.length > 0) {
+					this.twitterService.getTweets(celebs.celebs).subscribe(
 						(twitterData : any) => {
 							this.tweets = this.concatArrays(twitterData);
 							this.sortTweets();
 							this.visualizeTweets();
 						}
 					);
-				} else {
-					alert("Error: Couldn't find followed Celebrities");
 				}
+			},
+			error => {
+				//toastr.error(error.message);
 			}
 		)
 	}

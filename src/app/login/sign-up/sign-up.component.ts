@@ -31,33 +31,30 @@ export class SignUpComponent implements OnInit {
 			return;
 		} else {
 			this.loginService.checkUsername(this.username).subscribe(
-				(data: any) => {
-					if (data.exists === true) {
-						alert('This username already exists please try something else');
-						return;
-					} else {
-						this.registerNewUser();
-					}
+				exists => {
+					this.registerNewUser();
+				},
+				error => {
+					//toastr.error(error.message);
 				}
 			);
 		}
 	}
 
 	registerNewUser() : void {
-		var data = {
+		let data = {
 			username: this.username,
 			password: this.password,
 			confirmPassword: this.confirmPassword
 		};
 
 		this.loginService.register(data).subscribe(
-			(response : any) => {
-				if(response.success){
-					localStorage.setItem("user", JSON.stringify(response.user));
+			user => {
+					localStorage.setItem("user", JSON.stringify(user.user));
 					this.router.navigate(['all']);
-				} else {
-					alert("Could Not Sign Up.");
-				}
+			},
+			error => {
+				//toastr.error(error.message);
 			}
 		)
 	}

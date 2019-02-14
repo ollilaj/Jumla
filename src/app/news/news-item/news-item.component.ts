@@ -15,16 +15,16 @@ export class NewsItemComponent {
 
 	@Input()
 	set article(article : any) {
-		var articleDate;
+		let articleDate;
 		if(article.date){
 			articleDate = article.date;
 		} else {
 			articleDate = article.pubDate;
 		}
-		var tempDate = new Date(articleDate);
+		let tempDate = new Date(articleDate);
 		article.pubDate = this.monthNames[tempDate.getMonth()] + " " + tempDate.getDate() + ", " + tempDate.getFullYear();
 
-		var source;
+		let source;
 		if(article.creator){
 			source = "TMZ";
 		} else {
@@ -34,6 +34,7 @@ export class NewsItemComponent {
 
 		this._article = article;
 	}
+
 	get article() {
 		return this._article;
 	}

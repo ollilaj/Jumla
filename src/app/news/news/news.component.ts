@@ -21,6 +21,7 @@ export class NewsComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		this.authenticate();
+		this.fetchNews();
 	}
 
 	ngAfterViewInit(){
@@ -34,7 +35,6 @@ export class NewsComponent implements OnInit, AfterViewInit {
 			this.router.navigate(['sign-in']);
 		} else {
 			this.userId = JSON.parse(localStorage.getItem("user")).id;
-			this.fetchNews();
 		}
 	}
 
@@ -43,10 +43,13 @@ export class NewsComponent implements OnInit, AfterViewInit {
 	 */
 	fetchNews() : void {
 		this.newsService.getFeeds().subscribe(
-			(response : any) => {
-				if(response.data.length > 0) {
-					this.refineResultsFromFeeds(response.data);
+			data => {
+				if(data.data.length > 0) {
+					this.refineResultsFromFeeds(data.data);
 				}
+			},
+			error => {
+				//toastr.error(error.message);
 			}
 		)
 	}
@@ -55,9 +58,9 @@ export class NewsComponent implements OnInit, AfterViewInit {
 		rssItems = this.sortRSSItems(rssItems);
 
 		this.newsService.getCelebrities(this.userId).subscribe(
-			(data : any) => {
-				if(data.success && data.celebs.length > 0) {
-					let celebrities = data.celebs;
+			celebs => {
+				if(celebs.celebs.length > 0) {
+					let celebrities = celebs.celebs;
 					for(let i = 0; i < rssItems.length; i++) {
 						for(let j = 0; j < celebrities.length; j++) {
 							if(rssItems[i].title.indexOf(celebrities[j].name) > -1){
@@ -65,9 +68,10 @@ export class NewsComponent implements OnInit, AfterViewInit {
 							}
 						}
 					}
-				} else {
-					alert("Error: No recent news for the celebrities you follow!");
 				}
+			},
+			error => {
+				//toastr.error(error.message);
 			}
 		);
 	}

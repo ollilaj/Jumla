@@ -55,19 +55,19 @@ module.exports.getCelebrities = function (userId, callback) {
 		.exec(callback);
 };
 
-module.exports.follow = function (data, callback) {
+module.exports.follow = function (userId, celebrityId, callback) {
 	User.findOneAndUpdate(
-		{_id: data.userId},
-		{$push: {follows: data.celebrityId}},
+		{_id: userId},
+		{$push: {follows: celebrityId}},
 		{safe: true},
 		callback
 	);
 };
 
-module.exports.unfollow = function (data, callback) {
+module.exports.unfollow = function (userId, celebrityId, callback) {
 	User.findOneAndUpdate(
-		{_id: data.userId},
-		{$pull: {follows: data.celebrityId}},
+		{_id: userId},
+		{$pull: {follows: celebrityId}},
 		{safe: true},
 		callback
 	);

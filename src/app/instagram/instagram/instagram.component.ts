@@ -25,8 +25,7 @@ export class InstagramComponent implements OnInit, AfterViewInit{
 	}
 
 	authenticate() : void {
-		var user = localStorage.getItem("user");
-		if(!user){
+		if(!localStorage.getItem("user")){
 			this.router.navigate(['sign-in']);
 		}
 	}

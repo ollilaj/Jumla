@@ -178,7 +178,7 @@ router.get('/checkForUserName/:username', function (req,res) {
 				return next(new Error("User already exists"));
 
 			return res.json({exists: false})
-		})
+		});
 	} catch (err) {
 		return next(err);
 	}
@@ -250,14 +250,10 @@ router.get('/getAllCelebrities', function(req, res){
 });
 
 router.post('/follow', function(req, res){
-	let celebrityId = req.body.celebrityId;
 	let userId = req.body.userId;
-	let data = {
-		celebrityId: celebrityId,
-		userId: userId
-	};
+	let celebrityId = req.body.celebrityId;
 	try {
-		User.follow(data, function(err){
+		User.follow(userId, celebrityId, function(err){
 			if(err)
 				return next(err);
 
@@ -269,14 +265,10 @@ router.post('/follow', function(req, res){
 });
 
 router.post('/unfollow', function(req, res){
-	let celebrityId = req.body.celebrityId;
 	let userId = req.body.userId;
-	let data = {
-		celebrityId: celebrityId,
-		userId: userId
-	};
+	let celebrityId = req.body.celebrityId;
 	try {
-		User.unfollow(data, function(err){
+		User.unfollow(userId, celebrityId, function(err){
 			if(err)
 				return next(err);
 
