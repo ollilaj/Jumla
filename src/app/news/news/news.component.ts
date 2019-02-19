@@ -1,8 +1,9 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { NewsService } from './news.service';
-import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { NavBarService } from '../../nav-bar/nav-bar.service';
+import { ToastrService } from 'ngx-toastr';
+import { LoadingIconService } from "../../loading-icon/loading-icon.service";
 
 @Component({
 	selector: 'jumla-news',
@@ -17,9 +18,13 @@ export class NewsComponent implements OnInit, AfterViewInit {
 
 	constructor(private newsService : NewsService,
 				private navBarService : NavBarService,
-				private router: Router) {}
+				private router: Router,
+				private toastr: ToastrService,
+				private loadingIconService : LoadingIconService) {}
 
 	ngOnInit() {
+		this.loadingIconService.startLoading();
+		console.log(this.loadingIconService.loading);
 		this.authenticate();
 		this.fetchNews();
 	}
@@ -48,8 +53,8 @@ export class NewsComponent implements OnInit, AfterViewInit {
 					this.refineResultsFromFeeds(data.data);
 				}
 			},
-			error => {
-				//toastr.error(error.message);
+			errorResponse => {
+				this.toastr.error(errorResponse.error.message);
 			}
 		)
 	}
@@ -70,8 +75,8 @@ export class NewsComponent implements OnInit, AfterViewInit {
 					}
 				}
 			},
-			error => {
-				//toastr.error(error.message);
+			errorResponse => {
+				this.toastr.error(errorResponse.error.message);
 			}
 		);
 	}

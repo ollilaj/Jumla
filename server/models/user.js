@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Celebrity = require('./celebrity.js');
+const crypto = require('crypto');
 
 let userSchema = mongoose.Schema({
 	username: String,
@@ -49,7 +50,7 @@ module.exports.updatePassword = function (user, callback) {
 };
 */
 
-module.exports.getCelebrities = function (userId, callback) {
+module.exports.getCelebritiesTheyFollow = function (userId, callback) {
 	User.findOne({_id: userId})
 		.populate('follows')
 		.exec(callback);
@@ -78,8 +79,11 @@ module.exports.followFirstCelebs = function (userId) {
 		User.findOneAndUpdate(
 			{_id: userId},
 			{$push: {follows: {$each: [celebs[0]._id, celebs[1]._id, celebs[2]._id,celebs[3]._id, celebs[4]._id]}}},
-			{safe: true}
-			// Maybe add callback here in the future?
+			{safe: true},
+			(err) => {
+				if(err) {console.log(err)}
+				else {console.log("Added default celebs to follows field.")}
+			}
 		);
 	});
 };

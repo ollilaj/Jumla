@@ -1,8 +1,8 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TwitterService } from './twitter.service';
-import * as $ from 'jquery';
 import { NavBarService } from '../../nav-bar/nav-bar.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
 	selector: 'jumla-twitter',
@@ -18,7 +18,8 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 
 	constructor(private twitterService : TwitterService,
 				private navBarService : NavBarService,
-				private router: Router){}
+				private router: Router,
+				private toastr: ToastrService){}
 
 	ngOnInit(){
 		this.authenticate();
@@ -66,30 +67,16 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 	}
 
 	fetchTweets(): void {
-		this.twitterService.getCelebsTheyFollow(this.userId).subscribe(
-			celebs => {
-				if(celebs.celebs.length > 0) {
-					this.twitterService.getTweets(celebs.celebs).subscribe(
-						(twitterData : any) => {
-							this.tweets = this.concatArrays(twitterData);
-							this.sortTweets();
-							this.visualizeTweets();
-						}
-					);
-				}
+		this.twitterService.getTweets(this.userId).subscribe(
+			twitterData => {
+				this.tweets = twitterData.data;
+				this.sortTweets();
+				this.visualizeTweets();
 			},
-			error => {
-				//toastr.error(error.message);
+			errorResponse => {
+				this.toastr.error(errorResponse.error.message);
 			}
-		)
-	}
-
-	concatArrays(arrays) : any[] {
-		let singleArray = [];
-		for(let array of arrays) {
-			singleArray = singleArray.concat(array);
-		}
-		return singleArray;
+		);
 	}
 
 	sortTweets() : void {

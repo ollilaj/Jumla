@@ -1,10 +1,10 @@
 const Twitter = require('twitter');
 
 const client = new Twitter({
-	consumer_key: 'YqPX7shzZ5kSVPYs1sfzR1sBM',
-	consumer_secret: 'MfWjahGj4n7GQMnKJtcpfe9oFWRXXh3v0VLXOO6MTlEpJqnCj9',
-	access_token_key: '2564360821-6ff4NGFdrOLMlrDIBxVEh5GKsrwxcl8cDr4ARPI',
-	access_token_secret: 'UxFcj1O4h3VgoFjXUyVWAqE6kROcFsZPpVPQQMH9Fnm5B'
+	consumer_key: 'lngJCIndH4d6Wfu11eUA2zqZO',
+	consumer_secret: 'L7IBYijYJIRL5eyBkejWMpr4JTxuhDJzvVMksK7uou5fcTGI19',
+	access_token_key: '2564360821-3LecSMPABhFQfcxXNBaTCe6IKVRsx8C1beNzoRh',
+	access_token_secret: 'crpnMwhSOCWGOmnMHoBZbByEXM8otSqTWX0jt58AxtMYy'
 });
 
 const Celebrity = require('../models/celebrity.js');
@@ -17,10 +17,10 @@ exports.cacheTwitterData = () => {
 		if (err) throw err;
 		else {
 			for(let i = 0; i < celebs.length; i++) {
-				client.get('statuses/user_timeline', {screen_name: celebs[i], count: '5'}, function(twitterError, tweets, responseData) {
-					if (twitterError) throw error;
+				client.get('statuses/user_timeline', {screen_name: celebs[i].twitterId, count: '5'}, function(twitterError, tweets, responseData) {
+					if (twitterError){console.log("Twitter Error: " + twitterError)}
 					else {
-						twitterCache[user] = {
+						twitterCache[celebs[i].twitterId] = {
 							storedAt: new Date().getTime(),
 							data: tweets
 						};

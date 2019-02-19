@@ -3,6 +3,7 @@ import { FollowService } from '../follow.service';
 import * as $ from 'jquery';
 import { NavBarService } from '../../nav-bar/nav-bar.service';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
 	selector: 'app-follow',
@@ -15,7 +16,8 @@ export class FollowComponent implements OnInit, AfterViewInit {
 
 	constructor(private followService : FollowService,
 				private navBarService : NavBarService,
-				private router: Router) {
+				private router: Router,
+				private toastr: ToastrService) {
 	}
 
 	ngOnInit() {
@@ -25,7 +27,7 @@ export class FollowComponent implements OnInit, AfterViewInit {
 				this.getFollowedCelebs(celebs.celebs);
 			},
 			error => {
-			 	//toastr.error(error.message);
+			 	this.toastr.error(error.message);
 			}
 		)
 	}
@@ -54,7 +56,7 @@ export class FollowComponent implements OnInit, AfterViewInit {
 				}
 			},
 			error => {
-				//toastr.error(error.message);
+				this.toastr.error(error.message);
 			}
 		)
 	}
@@ -88,7 +90,7 @@ export class FollowComponent implements OnInit, AfterViewInit {
 				this.celebrities.find(celeb => celeb._id === celebrityId).isFollowed = true;
 			},
 			error => {
-				//toastr.error(error.message);
+				this.toastr.error(error.message);
 			}
 		)
 	}
@@ -105,7 +107,7 @@ export class FollowComponent implements OnInit, AfterViewInit {
 				this.celebrities.find(celeb => celeb._id === celebrityId).isFollowed = false;
 			},
 			error => {
-				//toastr.error(error.message);
+				this.toastr.error(error.message);
 			}
 		)
 	}

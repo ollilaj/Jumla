@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 // Vars
 const app = express();
 const api = require('./server/routes/api.js');
-const TwitterCacheController = require("../controllers/twitter-cache.controller");
+const TwitterCacheController = require("./server/controllers/twitter-cache.controller");
 
 TwitterCacheController.cacheTwitterData();
 
@@ -20,11 +20,10 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use('/api', api);
 
 // Send Error back to client
-app.use(function(err, req, res) {
-	console.log("Error triggered");
+app.use(function(err, req, res, next) {
 	let status = err.status || 500;
 	let message = err.message || 'Unknown Error';
-	return res.status(status).send(message);
+	return res.status(status).send({message: message});
 });
 
 // Redirect all other routes to Angular
@@ -52,4 +51,9 @@ mongoose.connection.on('error', function(){
 
 mongoose.connection.once('open', function(){
 	console.log("Successfully connected to the database.");
+});
+
+process.on('uncaughtException', function (err) {
+	console.log('uncaughtException: ' + err.message);
+	console.log(err.stack);
 });

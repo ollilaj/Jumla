@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../login.service';
 import { NavBarService } from '../../nav-bar/nav-bar.service';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
 	selector: 'app-sign-in',
@@ -15,7 +16,8 @@ export class SignInComponent implements OnInit {
 
 	constructor(private loginService : LoginService,
 				private router: Router,
-				private navBarService : NavBarService) {}
+				private navBarService : NavBarService,
+				private toastr: ToastrService) {}
 
 	ngOnInit() {
 		setTimeout(_ => {
@@ -33,8 +35,8 @@ export class SignInComponent implements OnInit {
 				localStorage.setItem("user", JSON.stringify(user.user));
 				this.router.navigate(['all']);
 			},
-			error => {
-				//toastr.error(error.message);
+			errorResponse => {
+				this.toastr.error(errorResponse.error.message);
 			}
 		)
 	}

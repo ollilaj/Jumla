@@ -1,3 +1,6 @@
-#tweet-container .twitter-tweet {
+#tweet-container .item-twitter {
+  margin: 15px auto;
+}
+#tweet-container .item-twitter .twitter-tweet {
   margin: auto;
 }

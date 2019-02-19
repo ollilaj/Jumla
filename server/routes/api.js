@@ -9,6 +9,7 @@ const Celebrity = require('../models/celebrity.js');
 
 // Controllers
 const TwitterCacheController = require("../controllers/twitter-cache.controller");
+const GetTweetsForAUserController = require("../controllers/get-tweets-for-a-user.controller");
 
 // Vars
 const router = express.Router();
@@ -32,7 +33,6 @@ router.get('/createCelebrityData', function(req, res){
 		"Christina Aguilera",
 		"Ciara",
 		"Dan Bilzerian",
-		"Demi Lovato",
 		"Drake",
 		"Ed Sheeran",
 		"Ellie Goulding",
@@ -82,7 +82,6 @@ router.get('/createCelebrityData', function(req, res){
 		"xtina",
 		"ciara",
 		"danbilzerian",
-		"ddlovato",
 		"drake",
 		"edsheeran",
 		"elliegoulding",
@@ -135,7 +134,7 @@ router.get('/createCelebrityData', function(req, res){
 
 });
 
-router.post('/register', function(req, res){
+router.post('/register', function(req, res, next){
 	let username = req.body.username;
 	let password = req.body.password;
 	User.create(username, password, function(err, user) {
@@ -148,7 +147,7 @@ router.post('/register', function(req, res){
 	});
 });
 
-router.post('/authenticate', function(req,res){
+router.post('/authenticate', function(req, res, next){
 	let username = req.body.username;
 	let password = req.body.password;
 
@@ -167,7 +166,7 @@ router.post('/authenticate', function(req,res){
 });
 
 // Check for duplicate user
-router.get('/checkForUserName/:username', function (req,res) {
+router.get('/checkForUserName/:username', function (req, res, next) {
 	let username = req.params.username;
 	try {
 		User.getUserByUsername(username, function (err, user) {
@@ -184,22 +183,23 @@ router.get('/checkForUserName/:username', function (req,res) {
 	}
 });
 
-// Get Tweets for a given celebrity
-router.get('/getTweets/:user', function (req, res) {
-	let user = req.params.user;
+// Get Tweets for the celebrities that this user follows
+router.get('/getTweets/:userId', function (req, res, next) {
+	let userId = req.params.userId;
 	try {
-		let twitterCache = TwitterCacheController.getTwitterCache();
-		if(twitterCache[user])
-			return res.json({data: twitterCache[user].data});
+		GetTweetsForAUserController.getTweets(userId, (err, tweets) => {
+			if(err)
+				return next(new Error("Could not fetch tweets"));
 
-		return next(new Error("No cached data for Twitter"));
+			return res.json({data: tweets});
+		});
 	} catch(err) {
 		return next(err);
 	}
 });
 
 // Get items from the specified rss feeds
-router.get('/getRSSFeeds', function(req, res){
+router.get('/getRSSFeeds', function(req, res, next){
 	try {
 		(async () => {
 			let urls = ['http://syndication.eonline.com/syndication/feeds/rssfeeds/topstories.xml',
@@ -222,10 +222,10 @@ router.get('/getRSSFeeds', function(req, res){
 	}
 });
 
-router.get('/getCelebsTheyFollow/:userId', function(req, res){
+router.get('/getCelebsTheyFollow/:userId', function(req, res, next){
 	let userId = req.params.userId;
 	try {
-		User.getCelebrities(userId, function(err, celebs){
+		User.getCelebritiesTheyFollow(userId, function(err, celebs){
 			if (err)
 				return next(err);
 
@@ -236,7 +236,7 @@ router.get('/getCelebsTheyFollow/:userId', function(req, res){
 	}
 });
 
-router.get('/getAllCelebrities', function(req, res){
+router.get('/getAllCelebrities', function(req, res, next){
 	try {
 		Celebrity.getAllCelebrities(function(err, celebs){
 			if (err)
@@ -249,7 +249,7 @@ router.get('/getAllCelebrities', function(req, res){
 	}
 });
 
-router.post('/follow', function(req, res){
+router.post('/follow', function(req, res, next){
 	let userId = req.body.userId;
 	let celebrityId = req.body.celebrityId;
 	try {
@@ -264,7 +264,7 @@ router.post('/follow', function(req, res){
 	}
 });
 
-router.post('/unfollow', function(req, res){
+router.post('/unfollow', function(req, res, next){
 	let userId = req.body.userId;
 	let celebrityId = req.body.celebrityId;
 	try {
