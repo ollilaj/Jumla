@@ -5,7 +5,7 @@ import {Subject} from "rxjs";
 export class LoadingIconService {
 
 	private _loading: boolean = false;
-	loadingStatus: Subject<any> = new Subject();
+	loadingStatus: Subject<boolean> = new Subject();
 
 	get loading(): boolean {
 		return this._loading;

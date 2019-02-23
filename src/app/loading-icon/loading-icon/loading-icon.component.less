@@ -1,28 +1,39 @@
-.pulse-loader {
+.overlay {
 	position: absolute;
-	top: 50%;
-	height: 75px;
-	margin: auto 0;
-	width: 75px;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	background: black;
+	opacity: .85;
 
-	&:before,
-	&:after {
-		animation: pulse-loader infinite 2s;
-		box-shadow: 0 0 5px black;
-		border-radius: 50%;
-		border: 3px solid black;
-		content: '';
-		display: block;
-		height: 100%;
-		left: -3px;
-		opacity: 0;
-		position: absolute;
-		top: -3px;
-		width: 100%;
-	}
+	.pulse-loader {
+		position: relative;
+		top: 45%;
+		left: ~"calc(50% - 38px)";
+		height: 75px;
+		margin: auto 0;
+		width: 75px;
 
-	&:after {
-		animation-delay: 1s;
+		&:before,
+		&:after {
+			animation: pulse-loader infinite 2s;
+			box-shadow: 0 0 5px black;
+			border-radius: 50%;
+			border: 3px solid #ffd633;
+			content: '';
+			display: block;
+			height: 100%;
+			left: -3px;
+			opacity: 0;
+			position: absolute;
+			top: -3px;
+			width: 100%;
+		}
+
+		&:after {
+			animation-delay: 1s;
+		}
 	}
 }
 

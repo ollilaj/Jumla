@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { CoreModule } from './core/core.module'
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { AllModule } from './all/all.module';
@@ -14,6 +15,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { routing } from './app.routes';
+
+import { NewsService } from "./news/news/news.service";
 
 @NgModule({
 	declarations: [
@@ -31,9 +34,10 @@ import { routing } from './app.routes';
 		FollowModule,
 		ToastrModule.forRoot(),
 		BrowserAnimationsModule,
-		LoadingIconModule
+		LoadingIconModule,
+		CoreModule.forRoot()
 	],
-	providers: [],
+	providers: [NewsService],
 	bootstrap: [AppComponent]
 })
 export class AppModule {

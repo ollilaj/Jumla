@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {LoadingIconService} from "../loading-icon.service";
 import {Subscription} from "rxjs";
 
@@ -12,11 +12,14 @@ export class LoadingIconComponent implements OnInit, OnDestroy {
 	loading: boolean = false;
 	loadingSubscription: Subscription;
 
-	constructor(private loadingIconService: LoadingIconService) {}
+	constructor(private loadingIconService: LoadingIconService,
+				private cdRef : ChangeDetectorRef) {}
 
 	ngOnInit() {
 		this.loadingSubscription = this.loadingIconService.loadingStatus.subscribe((value) => {
+			console.log("Value has changed in subscribe method on component.");
 			this.loading = value;
+			this.cdRef.detectChanges();
 		});
 	}
 

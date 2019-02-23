@@ -8,8 +8,7 @@ import { LoadingIconService } from "../../loading-icon/loading-icon.service";
 @Component({
 	selector: 'jumla-news',
 	templateUrl: './news.component.html',
-	styleUrls: ['./news.component.css'],
-	providers: [NewsService]
+	styleUrls: ['./news.component.css']
 })
 export class NewsComponent implements OnInit, AfterViewInit {
 
@@ -23,9 +22,8 @@ export class NewsComponent implements OnInit, AfterViewInit {
 				private loadingIconService : LoadingIconService) {}
 
 	ngOnInit() {
-		this.loadingIconService.startLoading();
-		console.log(this.loadingIconService.loading);
 		this.authenticate();
+		this.loadingIconService.startLoading();
 		this.fetchNews();
 	}
 
@@ -54,6 +52,7 @@ export class NewsComponent implements OnInit, AfterViewInit {
 				}
 			},
 			errorResponse => {
+				this.loadingIconService.stopLoading();
 				this.toastr.error(errorResponse.error.message);
 			}
 		)
@@ -74,8 +73,10 @@ export class NewsComponent implements OnInit, AfterViewInit {
 						}
 					}
 				}
+				this.loadingIconService.stopLoading();
 			},
 			errorResponse => {
+				this.loadingIconService.stopLoading();
 				this.toastr.error(errorResponse.error.message);
 			}
 		);

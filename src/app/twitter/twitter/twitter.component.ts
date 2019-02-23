@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { TwitterService } from './twitter.service';
 import { NavBarService } from '../../nav-bar/nav-bar.service';
 import { ToastrService } from 'ngx-toastr';
+import { LoadingIconService } from "../../loading-icon/loading-icon.service";
 
 @Component({
 	selector: 'jumla-twitter',
@@ -19,10 +20,12 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 	constructor(private twitterService : TwitterService,
 				private navBarService : NavBarService,
 				private router: Router,
-				private toastr: ToastrService){}
+				private toastr: ToastrService,
+				private loadingIconService : LoadingIconService){}
 
 	ngOnInit(){
 		this.authenticate();
+		this.loadingIconService.startLoading();
 		this.initTwitterWidget();
 	}
 
@@ -63,7 +66,7 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 		}(document, "script", "twitter-wjs"));
 
 		let that = this;
-		setTimeout(function(){ that.fetchTweets(); }, 100);
+		setTimeout(function(){ that.fetchTweets(); }, 500);
 	}
 
 	fetchTweets(): void {
@@ -74,6 +77,7 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 				this.visualizeTweets();
 			},
 			errorResponse => {
+				this.loadingIconService.stopLoading();
 				this.toastr.error(errorResponse.error.message);
 			}
 		);
@@ -90,6 +94,8 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 	}
 
 	visualizeTweets(): void {
+		let promiseStack = [];
+
 		for(let tweet of this.tweets) {
 			let newTweet = document.createElement("div");
 			newTweet.classList.add("item-twitter");
@@ -97,15 +103,22 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 			let tweetContainer = document.getElementById("tweet-container");
 			tweetContainer.appendChild(newTweet);
 
-			(<any>window).twttr.widgets.createTweet(
+			promiseStack.push((<any>window).twttr.widgets.createTweet(
 				tweet.id_str, newTweet,
 				{
 					conversation : 'none',    // or all
 					cards        : 'visible',  // or visible
 					align        : 'center'
 				}
-			);
+			));
 		}
+
+		Promise.all(promiseStack).then(() => {
+			this.loadingIconService.stopLoading();
+		}, (err) => {
+			this.loadingIconService.stopLoading();
+			this.toastr.error(err);
+		});
 	}
 
 }
