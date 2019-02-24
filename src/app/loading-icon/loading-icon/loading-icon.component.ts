@@ -17,7 +17,6 @@ export class LoadingIconComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.loadingSubscription = this.loadingIconService.loadingStatus.subscribe((value) => {
-			console.log("Value has changed in subscribe method on component.");
 			this.loading = value;
 			this.cdRef.detectChanges();
 		});

@@ -26,16 +26,14 @@ export class FollowComponent implements OnInit, AfterViewInit {
 			 celebs => {
 				this.getFollowedCelebs(celebs.celebs);
 			},
-			error => {
-			 	this.toastr.error(error.message);
+			errorResponse => {
+			 	this.toastr.error(errorResponse.error.message);
 			}
 		)
 	}
 
 	ngAfterViewInit(){
-		setTimeout(_ => {
-			this.navBarService.show();
-		});
+		setTimeout(() => {this.navBarService.show()});
 	}
 
 	authenticate() : void {
@@ -55,8 +53,8 @@ export class FollowComponent implements OnInit, AfterViewInit {
 					this.celebrities = allCelebs;
 				}
 			},
-			error => {
-				this.toastr.error(error.message);
+			errorResponse => {
+				this.toastr.error(errorResponse.error.message);
 			}
 		)
 	}
@@ -89,8 +87,8 @@ export class FollowComponent implements OnInit, AfterViewInit {
 			success => {
 				this.celebrities.find(celeb => celeb._id === celebrityId).isFollowed = true;
 			},
-			error => {
-				this.toastr.error(error.message);
+			errorResponse => {
+				this.toastr.error(errorResponse.error.message);
 			}
 		)
 	}
@@ -106,8 +104,8 @@ export class FollowComponent implements OnInit, AfterViewInit {
 			success => {
 				this.celebrities.find(celeb => celeb._id === celebrityId).isFollowed = false;
 			},
-			error => {
-				this.toastr.error(error.message);
+			errorResponse => {
+				this.toastr.error(errorResponse.error.message);
 			}
 		)
 	}

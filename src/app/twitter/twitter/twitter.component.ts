@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TwitterService } from './twitter.service';
 import { NavBarService } from '../../nav-bar/nav-bar.service';
@@ -11,7 +11,7 @@ import { LoadingIconService } from "../../loading-icon/loading-icon.service";
 	styleUrls: ['./twitter.component.css'],
 	providers: [TwitterService]
 })
-export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
+export class TwitterComponent implements OnInit, AfterViewInit{
 
 	public userId;
 	public tweets = [];
@@ -26,17 +26,12 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 	ngOnInit(){
 		this.authenticate();
 		this.loadingIconService.startLoading();
-		this.initTwitterWidget();
 	}
 
 	ngAfterViewInit(){
-		setTimeout(_ => {
-			this.navBarService.show();
-		});
-	}
-
-	ngOnDestroy(){
-
+		setTimeout(() => {this.navBarService.show()});
+		this.initializeTwitterWidget();
+		(<any>window).twttr.ready(() => { this.fetchTweets() });
 	}
 
 	authenticate() : void {
@@ -47,7 +42,7 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 		}
 	}
 
-	initTwitterWidget() {
+	initializeTwitterWidget() {
 		(<any>window).twttr = (function(d, s, id) {
 			var js, fjs = d.getElementsByTagName(s)[0],
 				t = (<any>window).twttr || {};
@@ -64,9 +59,6 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 
 			return t;
 		}(document, "script", "twitter-wjs"));
-
-		let that = this;
-		setTimeout(function(){ that.fetchTweets(); }, 500);
 	}
 
 	fetchTweets(): void {
@@ -74,7 +66,7 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 			twitterData => {
 				this.tweets = twitterData.data;
 				this.sortTweets();
-				this.visualizeTweets();
+				this.displayTweets();
 			},
 			errorResponse => {
 				this.loadingIconService.stopLoading();
@@ -93,7 +85,7 @@ export class TwitterComponent implements OnInit, AfterViewInit, OnDestroy{
 		this.tweets = this.tweets.reverse();
 	}
 
-	visualizeTweets(): void {
+	displayTweets(): void {
 		let promiseStack = [];
 
 		for(let tweet of this.tweets) {

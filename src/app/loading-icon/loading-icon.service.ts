@@ -17,7 +17,6 @@ export class LoadingIconService {
 	}
 
 	startLoading() {
-		console.log("Start loading");
 		this.loading = true;
 	}
 

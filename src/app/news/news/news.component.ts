@@ -28,9 +28,7 @@ export class NewsComponent implements OnInit, AfterViewInit {
 	}
 
 	ngAfterViewInit(){
-		setTimeout(_ => {
-			this.navBarService.show();
-		});
+		setTimeout(() => {this.navBarService.show()});
 	}
 
 	authenticate() : void {
@@ -41,9 +39,6 @@ export class NewsComponent implements OnInit, AfterViewInit {
 		}
 	}
 
-	/*
-	 * Uses YUI npm package to get all the items in the rss feeds listed
-	 */
 	fetchNews() : void {
 		this.newsService.getFeeds().subscribe(
 			data => {

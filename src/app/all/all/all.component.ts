@@ -17,9 +17,7 @@ export class AllComponent implements OnInit, AfterViewInit {
 	}
 
 	ngAfterViewInit(){
-		setTimeout(_ => {
-			this.navBarService.show();
-		});
+		setTimeout(() => {this.navBarService.show()});
 	}
 
 	sortAll() {
