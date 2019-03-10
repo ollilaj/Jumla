@@ -36,8 +36,8 @@ app.get('*', function(req, res) {
 });
 
 // Start express server
-app.listen(3000, function(){
-	console.log("Server is listening on port 3000");
+app.listen(process.env.NODE_PORT, function(){
+	console.log("Server is listening on port " + process.env.NODE_PORT);
 });
 
 // Database Configuration
