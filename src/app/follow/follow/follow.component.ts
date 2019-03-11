@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class FollowComponent implements OnInit, AfterViewInit {
 
+	public userId;
 	public celebrities = [];
 
 	constructor(private followService : FollowService,
@@ -24,7 +25,7 @@ export class FollowComponent implements OnInit, AfterViewInit {
 		this.authenticate();
 		this.followService.getCelebrities().subscribe(
 			 celebs => {
-				this.getFollowedCelebs(celebs.celebs);
+				this.getFollowedCelebs(celebs);
 			},
 			errorResponse => {
 			 	this.toastr.error(errorResponse.error.message);
@@ -39,19 +40,21 @@ export class FollowComponent implements OnInit, AfterViewInit {
 	authenticate() : void {
 		if(!localStorage.getItem("user")){
 			this.router.navigate(['sign-in']);
+		} else {
+			this.userId = JSON.parse(localStorage.getItem("user")).id;
 		}
 	}
 
 	getFollowedCelebs(allCelebs) : void {
-		let userString = localStorage.getItem("user");
-		let userId = JSON.parse(userString).id;
-		this.followService.getCelebsTheyFollow(userId).subscribe(
+		this.followService.getCelebsTheyFollow(this.userId).subscribe(
 			celebs => {
 				if(celebs.celebs && celebs.celebs.length > 0) {
-					this.setFollowedCelebs(allCelebs, celebs.celebs);
+					this.setFollowedCelebs(allCelebs.celebs, celebs.celebs);
 				} else {
-					this.celebrities = allCelebs;
+					// Don't follow any celebs
 				}
+
+				this.celebrities = allCelebs.celebs;
 			},
 			errorResponse => {
 				this.toastr.error(errorResponse.error.message);
@@ -61,31 +64,33 @@ export class FollowComponent implements OnInit, AfterViewInit {
 
 	setFollowedCelebs(allCelebs, followedCelebs) : void {
 
+		console.log(allCelebs);
+		console.log(followedCelebs);
+
 		let currentCelebId, currentFollowedCelebId;
 		for(let i = 0; i < allCelebs.length; i++) {
-			currentCelebId = allCelebs[i]._id;
+			currentCelebId = allCelebs[i].id;
 			for(let j = 0; j < followedCelebs.length; j++) {
-				currentFollowedCelebId = followedCelebs[j]._id;
+				currentFollowedCelebId = followedCelebs[j].id;
 
 				if(currentCelebId == currentFollowedCelebId){
+					console.log(allCelebs[i]);
 					allCelebs[i].isFollowed = true;
 				}
 			}
 		}
 
-		this.celebrities = allCelebs;
 	}
 
 	follow(event) : void {
 		let celebrityId = $(event.target).closest(".celebrity-item").attr("data-celebid");
-		let currentUserId = JSON.parse(localStorage.getItem("user")).id;
 		let data = {
 			celebrityId: celebrityId,
-			userId: currentUserId
+			userId: this.userId
 		};
 		this.followService.followCelebrity(data).subscribe(
 			success => {
-				this.celebrities.find(celeb => celeb._id === celebrityId).isFollowed = true;
+				this.celebrities.find(celeb => celeb.id === celebrityId).isFollowed = true;
 			},
 			errorResponse => {
 				this.toastr.error(errorResponse.error.message);
@@ -95,14 +100,13 @@ export class FollowComponent implements OnInit, AfterViewInit {
 
 	unfollow(event) : void {
 		let celebrityId = $(event.target).closest(".celebrity-item").attr("data-celebid");
-		let currentUserId = JSON.parse(localStorage.getItem("user")).id;
 		let data = {
 			celebrityId: celebrityId,
-			userId: currentUserId
+			userId: this.userId
 		};
 		this.followService.unfollowCelebrity(data).subscribe(
 			success => {
-				this.celebrities.find(celeb => celeb._id === celebrityId).isFollowed = false;
+				this.celebrities.find(celeb => celeb.id === celebrityId).isFollowed = false;
 			},
 			errorResponse => {
 				this.toastr.error(errorResponse.error.message);

@@ -58,11 +58,10 @@ export class NewsComponent implements OnInit, AfterViewInit {
 
 		this.newsService.getCelebrities(this.userId).subscribe(
 			celebs => {
-				if(celebs.celebs.length > 0) {
-					let celebrities = celebs.celebs;
+				if(celebs.length > 0) {
 					for(let i = 0; i < rssItems.length; i++) {
-						for(let j = 0; j < celebrities.length; j++) {
-							if(rssItems[i].title.indexOf(celebrities[j].name) > -1){
+						for(let j = 0; j < celebs.length; j++) {
+							if(rssItems[i].title.indexOf(celebs[j].name) > -1){
 								this.articles.push(rssItems[i]);
 							}
 						}

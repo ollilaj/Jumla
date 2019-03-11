@@ -11,6 +11,7 @@ dotenv.config();
 const app = express();
 const api = require('./server/routes/api.js');
 const TwitterCacheController = require("./server/controllers/twitter-cache.controller");
+const port = process.env.PORT || 3000;
 
 TwitterCacheController.cacheTwitterData();
 
@@ -36,25 +37,8 @@ app.get('*', function(req, res) {
 });
 
 // Start express server
-app.listen(process.env.NODE_PORT, function(){
+app.listen(port, function(){
 	console.log("Server is listening on port " + process.env.NODE_PORT);
-});
-
-// Database Configuration
-let dbConfig = require("./server/config/database-config.js");
-let mongoose = require("mongoose");
-
-mongoose.Promise = global.Promise;
-
-mongoose.connect(dbConfig.url, { useNewUrlParser: true });
-
-mongoose.connection.on('error', function(){
-	console.log("Could not connect to the database. Exiting now...");
-	process.exit();
-});
-
-mongoose.connection.once('open', function(){
-	console.log("Successfully connected to the database.");
 });
 
 process.on('uncaughtException', function (err) {

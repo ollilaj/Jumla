@@ -7,20 +7,20 @@ const client = new Twitter({
 	access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
-const Celebrity = require('../models/celebrity.js');
+const Celebrity = require('./celebrity.js');
 
 let twitterCache = {};
 
 exports.cacheTwitterData = () => {
 
-	Celebrity.getAll(function(err, celebs){
+	Celebrity.getAllCelebrities(function(err, celebs){
 		if (err) throw err;
 		else {
 			for(let i = 0; i < celebs.length; i++) {
-				client.get('statuses/user_timeline', {screen_name: celebs[i].twitterHandle, count: '5'}, function(twitterError, tweets, responseData) {
+				client.get('statuses/user_timeline', {screen_name: celebs[i].twitterId, count: '5'}, function(twitterError, tweets, responseData) {
 					if (twitterError){console.log(twitterError)}
 					else {
-						twitterCache[celebs[i].twitterHandle] = {
+						twitterCache[celebs[i].twitterId] = {
 							storedAt: new Date().getTime(),
 							data: tweets
 						};

@@ -31,8 +31,9 @@ export class SignInComponent implements OnInit {
 			password: this.password
 		};
 		this.loginService.authenticate(data).subscribe(
-			user => {
-				localStorage.setItem("user", JSON.stringify(user.user));
+			userId => {
+				console.log(userId);
+				localStorage.setItem("userId", JSON.stringify(userId));
 				this.router.navigate(['all']);
 			},
 			errorResponse => {
