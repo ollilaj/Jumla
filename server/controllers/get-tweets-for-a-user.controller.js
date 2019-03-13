@@ -1,6 +1,6 @@
-const Follows = require('../models/Follows');
+const Follows = require('../models/follows');
 
-const TwitterCacheController = require("./twitter-cache.controller");
+const TwitterCacheController = require("./twitter-cache.controller.js");
 
 exports.getTweets = (userId, callback) => {
 

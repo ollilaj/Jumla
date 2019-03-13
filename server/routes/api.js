@@ -4,9 +4,9 @@ const cron = require('node-cron');
 const Parser = require('rss-parser');
 
 // Models
-const User = require("../models/User.js");
-const Celebrity = require("../models/Celebrity.js");
-const Follows = require("../models/Follows.js");
+const User = require("../models/user.js");
+const Celebrity = require("../models/celebrity.js");
+const Follows = require("../models/follows.js");
 
 // Controllers
 const TwitterCacheController = require("../controllers/twitter-cache.controller");
