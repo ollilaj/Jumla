@@ -52,7 +52,6 @@ export class SignUpComponent implements OnInit {
 
 		this.loginService.register(data).subscribe(
 			userId => {
-				console.log(userId);
 				localStorage.setItem("user", JSON.stringify(userId));
 				this.router.navigate(['all']);
 			},

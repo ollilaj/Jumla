@@ -4,7 +4,7 @@
 			<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-md-offset-2 col-lg-offset-3">
 				<div id="celebrities-cont">
 					<div id="celebrities-header-text">Celebrities</div>
-					<div *ngFor="let celebrity of celebrities" attr.data-celebid="{{celebrity.id}}" class="celebrity-item">
+					<div *ngFor="let celebrity of allCelebrities" attr.data-celebid="{{celebrity.id}}" class="celebrity-item">
 						<div class="celebrity-name">{{celebrity.name}}</div>
 
 						<div *ngIf="celebrity.isFollowed" class="follow-button-cont">

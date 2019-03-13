@@ -38,7 +38,7 @@ export class TwitterComponent implements OnInit, AfterViewInit{
 		if(!localStorage.getItem("user")){
 			this.router.navigate(['sign-in']);
 		} else {
-			this.userId = JSON.parse(localStorage.getItem("user")).id;
+			this.userId = JSON.parse(localStorage.getItem("user")).userId;
 		}
 	}
 

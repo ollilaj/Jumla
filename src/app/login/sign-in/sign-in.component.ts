@@ -32,7 +32,6 @@ export class SignInComponent implements OnInit {
 		};
 		this.loginService.authenticate(data).subscribe(
 			userId => {
-				console.log(userId);
 				localStorage.setItem("userId", JSON.stringify(userId));
 				this.router.navigate(['all']);
 			},

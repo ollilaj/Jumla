@@ -20,7 +20,7 @@ Follows.delete = function(userId, celebrityId, callback) {
 
 Follows.getCelebritiesTheyFollow = function(userId, callback) {
 
-	let query = `select name, twitterHandle from celebrity inner join follows on follows.celebrityId = celebrity.id where follows.userId = "${userId}"`;
+	let query = `select celebrity.id, celebrity.name, celebrity.twitterHandle from celebrity inner join follows on follows.celebrityId = celebrity.id where follows.userId = "${userId}"`;
 
 	db.query(query, callback);
 
