@@ -38,7 +38,7 @@ app.get('*', function(req, res) {
 
 // Start express server
 app.listen(port, function(){
-	console.log("Server is listening on port " + process.env.NODE_PORT);
+	console.log("Server is listening on port " + process.env.PORT);
 });
 
 process.on('uncaughtException', function (err) {
