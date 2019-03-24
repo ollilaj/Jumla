@@ -58,6 +58,7 @@ export class NewsComponent implements OnInit, AfterViewInit {
 
 		this.newsService.getCelebrities(this.userId).subscribe(
 			celebs => {
+				celebs = JSON.parse(celebs.celebs);
 				if(celebs.length > 0) {
 					for(let i = 0; i < rssItems.length; i++) {
 						for(let j = 0; j < celebs.length; j++) {
